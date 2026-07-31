@@ -1,0 +1,55 @@
+{
+  "inicio": {
+    "boasVindas": "Welcome to Florest Book!",
+    "campoNome": "What is your name?",
+    "comecar": "Start",
+    "ola": "Hello, {{nome}}!"
+  },
+  "animais": {
+    "elefante": "Elephant",
+    "leao": "Lion",
+    "lobo": "Wolf",
+    "macaco": "Monkey",
+    "sapo": "Frog"
+  },
+  "silabas": {
+    "elefante": "E-LE-PHANT",
+    "leao": "LI-ON",
+    "lobo": "WOLF",
+    "macaco": "MON-KEY",
+    "sapo": "FROG"
+  },
+  "temas": {
+    "standard": "Forest",
+    "pascoa": "Easter",
+    "festejunina": "June Festival",
+    "halloween": "Halloween",
+    "natal": "Christmas",
+    "anonovo": "New Year"
+  },
+  "menu": {
+    "idioma": "Language",
+    "background": "Scenery",
+    "som": "Sound",
+    "somLigado": "Sound on",
+    "somDesligado": "Sound off"
+  },
+  "anuncios": {
+    "remover": "Remove Ads",
+    "titulo": "Remove ads",
+    "descricao": "Play without ads, forever.",
+    "comprar": "Buy",
+    "restaurar": "Restore purchase",
+    "cancelar": "Cancel"
+  },
+  "barreiraParental": {
+    "titulo": "Adults only",
+    "instrucao": "What is {{a}} × {{b}}?",
+    "erro": "Wrong answer. Please try again.",
+    "confirmar": "Confirm"
+  },
+  "legal": {
+    "termos": "Terms of Use",
+    "privacidade": "Privacy Policy"
+  }
+}

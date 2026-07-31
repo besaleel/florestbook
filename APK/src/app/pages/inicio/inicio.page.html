@@ -1,0 +1,46 @@
+<ion-content [fullscreen]="true" [scrollY]="false">
+  <div class="tela" [style.--cor-tema]="fundo.corDaBorda()">
+    <img class="logo" src="assets/images/logo.webp" alt="Florest Book" />
+
+    <h1 class="boas-vindas">{{ 'inicio.boasVindas' | translate }}</h1>
+
+    <input
+      class="campo-nome"
+      type="text"
+      [ngModel]="nome()"
+      (ngModelChange)="nome.set($event)"
+      [placeholder]="'inicio.campoNome' | translate"
+      maxlength="20"
+      autocomplete="off"
+    />
+
+    <button class="botao-comecar" type="button" (click)="comecar()">
+      {{ 'inicio.comecar' | translate }}
+    </button>
+
+    <div class="idiomas">
+      @for (idioma of idiomas; track idioma) {
+        <button
+          type="button"
+          class="bandeira"
+          [class.ativo]="settings.idioma() === idioma"
+          (click)="trocarIdioma(idioma)"
+          [attr.aria-label]="idioma"
+        >
+          {{ bandeiras[idioma] }}
+        </button>
+      }
+    </div>
+
+    <button
+      class="botao-som"
+      type="button"
+      (click)="alternarSom()"
+      [attr.aria-label]="
+        (settings.som() ? 'menu.somLigado' : 'menu.somDesligado') | translate
+      "
+    >
+      {{ settings.som() ? '🔊' : '🔇' }}
+    </button>
+  </div>
+</ion-content>

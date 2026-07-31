@@ -1,0 +1,55 @@
+{
+  "inicio": {
+    "boasVindas": "Bem-vindo ao Florest Book!",
+    "campoNome": "Qual é o seu nome?",
+    "comecar": "Começar",
+    "ola": "Olá, {{nome}}!"
+  },
+  "animais": {
+    "elefante": "Elefante",
+    "leao": "Leão",
+    "lobo": "Lobo",
+    "macaco": "Macaco",
+    "sapo": "Sapo"
+  },
+  "silabas": {
+    "elefante": "E-LE-FAN-TE",
+    "leao": "LE-ÃO",
+    "lobo": "LO-BO",
+    "macaco": "MA-CA-CO",
+    "sapo": "SA-PO"
+  },
+  "temas": {
+    "standard": "Floresta",
+    "pascoa": "Páscoa",
+    "festejunina": "Festa Junina",
+    "halloween": "Halloween",
+    "natal": "Natal",
+    "anonovo": "Ano Novo"
+  },
+  "menu": {
+    "idioma": "Idioma",
+    "background": "Cenário",
+    "som": "Som",
+    "somLigado": "Som ligado",
+    "somDesligado": "Som desligado"
+  },
+  "anuncios": {
+    "remover": "Remover Anúncio",
+    "titulo": "Remover anúncios",
+    "descricao": "Jogue sem anúncios, para sempre.",
+    "comprar": "Comprar",
+    "restaurar": "Restaurar compra",
+    "cancelar": "Cancelar"
+  },
+  "barreiraParental": {
+    "titulo": "Área para adultos",
+    "instrucao": "Quanto é {{a}} × {{b}}?",
+    "erro": "Resposta incorreta. Tente novamente.",
+    "confirmar": "Confirmar"
+  },
+  "legal": {
+    "termos": "Termo de Uso",
+    "privacidade": "Política de Privacidade"
+  }
+}

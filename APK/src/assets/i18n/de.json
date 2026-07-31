@@ -1,0 +1,55 @@
+{
+  "inicio": {
+    "boasVindas": "Willkommen bei Florest Book!",
+    "campoNome": "Wie heißt du?",
+    "comecar": "Los geht's",
+    "ola": "Hallo, {{nome}}!"
+  },
+  "animais": {
+    "elefante": "Elefant",
+    "leao": "Löwe",
+    "lobo": "Wolf",
+    "macaco": "Affe",
+    "sapo": "Frosch"
+  },
+  "silabas": {
+    "elefante": "E-LE-FANT",
+    "leao": "LÖ-WE",
+    "lobo": "WOLF",
+    "macaco": "AF-FE",
+    "sapo": "FROSCH"
+  },
+  "temas": {
+    "standard": "Wald",
+    "pascoa": "Ostern",
+    "festejunina": "Johannisfest",
+    "halloween": "Halloween",
+    "natal": "Weihnachten",
+    "anonovo": "Neujahr"
+  },
+  "menu": {
+    "idioma": "Sprache",
+    "background": "Kulisse",
+    "som": "Ton",
+    "somLigado": "Ton an",
+    "somDesligado": "Ton aus"
+  },
+  "anuncios": {
+    "remover": "Werbung entfernen",
+    "titulo": "Werbung entfernen",
+    "descricao": "Spiele für immer ohne Werbung.",
+    "comprar": "Kaufen",
+    "restaurar": "Kauf wiederherstellen",
+    "cancelar": "Abbrechen"
+  },
+  "barreiraParental": {
+    "titulo": "Nur für Erwachsene",
+    "instrucao": "Wie viel ist {{a}} × {{b}}?",
+    "erro": "Falsche Antwort. Bitte versuche es erneut.",
+    "confirmar": "Bestätigen"
+  },
+  "legal": {
+    "termos": "Nutzungsbedingungen",
+    "privacidade": "Datenschutzerklärung"
+  }
+}

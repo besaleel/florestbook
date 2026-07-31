@@ -90,6 +90,7 @@ Todos os originais ficam em `PROJECT/` e **nunca são sobrescritos**.
 | `background-festejunina.png` | 1024×1536 | RGB | 2.569 KB | Tema Festa Junina |
 | `background-halloween.png` | 1024×1536 | RGB | 2.348 KB | Tema Halloween |
 | `backgroung-natal.png` | 1024×1536 | RGB | 3.174 KB | Tema Natal — ⚠️ ver grafia abaixo |
+| `background-anonovo.png` | 1024×1536 | RGB | 2.755 KB | Tema Ano Novo |
 | `logo.png` | 1024×1024 | RGBA | 1.941 KB | Tela inicial (logo completo) |
 | `logo-simplificada.png` | 1024×1024 | RGBA | 1.879 KB | **Origem dos ícones do app** |
 | `flaicon.ico` | 256×256 | ICO | 170 KB | Build desktop / favicon de site |
@@ -98,7 +99,7 @@ Todos os originais ficam em `PROJECT/` e **nunca são sobrescritos**.
 Ambos os logos têm **canal alpha**, atendendo ao requisito do ícone adaptativo
 do Android.
 
-#### Os cinco backgrounds
+#### Os seis backgrounds
 
 Todos entregues em 1024×1536 RGB, no mesmo estilo ilustrado e com a **mesma
 composição em corredor de floresta**: vegetação emoldurando as laterais e o
@@ -113,6 +114,14 @@ todos os temas** — não é preciso calibrar posições por background.
 | Festa Junina | `festejunina` | Bandeirinhas xadrez, fogueira, barraca de palha, chapéu |
 | Halloween | `halloween` | **Noturna** — lua, morcegos, abóboras, fantasma, céu roxo |
 | Natal | `natal` | **Noturna** — neve, pinheiros decorados, boneco de neve, lua |
+| Ano Novo | `anonovo` | **Noturna** — fogos, balões dourados, luzinhas, cartola e estrelas |
+
+> ⚠️ **O Ano Novo tem estilo visual distinto dos outros cinco.** Enquanto os
+> demais são ilustrações em estilo cartoon, `background-anonovo.png` é
+> fotorrealista. Os animais são cartoon; sobre esse fundo o contraste de estilo
+> fica perceptível. A composição em corredor, porém, é a mesma — o centro está
+> livre e o arranjo de § 4.2 se aplica sem calibração. **A avaliar com o
+> cliente:** manter assim, ou substituir por uma versão em cartoon.
 
 > ⚠️ **Grafia do arquivo do Natal.** O arquivo foi entregue como
 > **`backgroung-natal.png`** — "backgrou**ng**", com **G** no lugar do **D**. As
@@ -437,7 +446,8 @@ Registro desta versão:
 | `pascoa` | `background-pascoa.webp` | Páscoa −7/+1 | todos |
 | `festejunina` | `background-festejunina.webp` | 01–30/06 | **PT** |
 | `halloween` | `background-halloween.webp` | 24–31/10 | todos |
-| `natal` | `background-natal.webp` | 01–31/12 | todos |
+| `natal` | `background-natal.webp` | 01–24/12 | todos |
+| `anonovo` | `background-anonovo.webp` | 25/12–05/01 | todos |
 
 > As chaves são **sem acento e sem hífen** (`pascoa`, `festejunina`),
 > acompanhando a convenção das chaves de animal (§ 3.2). O nome exibido no
@@ -479,11 +489,23 @@ janelas: `standard`.
 | Páscoa | 7 dias antes até 1 dia depois do domingo de Páscoa | Data móvel — computus | Todos |
 | Festa Junina | 1 a 30 de junho | Fixo | Somente PT |
 | Halloween | 24 a 31 de outubro | Fixo | Todos |
-| Natal | 1 a 31 de dezembro | Fixo | Todos |
+| Natal | 1 a **24** de dezembro | Fixo | Todos |
+| Ano Novo | **25 de dezembro a 5 de janeiro** | Fixo, atravessa o ano | Todos |
 
 Em caso de sobreposição, vale a janela de **menor duração** (a mais específica).
 Com as janelas acima, nenhuma colide: a Páscoa cai entre março e abril, e as
-demais são meses fixos distintos.
+demais são intervalos distintos.
+
+> **O Natal foi encurtado para 01–24/12** para dar lugar ao Ano Novo a partir
+> de 25/12. Sem esse recorte as duas janelas colidiriam em toda a última semana
+> de dezembro, e o desempate por menor duração escolheria o Ano Novo de
+> qualquer forma — melhor deixar a intenção explícita no registro do que
+> depender do desempate.
+
+> **A janela do Ano Novo atravessa a virada do ano** (dezembro → janeiro),
+> sendo a única desse tipo. A comparação de datas trata esse caso
+> explicitamente: quando o início é maior que o fim, a janela é lida como
+> "depois do início **ou** antes do fim".
 
 **Festa Junina é restrita ao português** por ser culturalmente específica —
 exibi-la automaticamente para quem não a celebra não faz sentido para a criança.
@@ -656,10 +678,11 @@ Registrado para evitar ambiguidade — não faz parte da primeira entrega:
 |---|-----------|----------|-------|
 | D | Licença da música de fundo | Publicação na loja | § 3.4 |
 | H | Revisão nativa da separação silábica nos 6 idiomas | Conteúdo do i18n | § 4.2 |
-| J | Validar `logo-simplificada.png` na safe zone de 66% | Build do ícone adaptativo | § 3.1 |
 | K | Ouvir a música comprimida em aparelho real (origem 30.357 Hz) | Fechamento do áudio | § 3.4 |
-| L | **Renomear `backgroung-natal.png` → `background-natal.png`** | Tema de Natal aparecer | § 3.1 |
-| M | Nomes dos 5 temas traduzidos nos 6 idiomas | Rótulos do seletor | § 4.3 |
+| M | Nomes dos **6** temas traduzidos nos 6 idiomas | Rótulos do seletor | § 4.3 |
+| N | **Logo diz "ForestBook"; o app se chama "Florest Book"** — a arte usa a grafia inglesa correta, a ficha da loja usa a decidida em § 7. Definir qual vale | Identidade visual | § 3.1 |
+| O | **`logo-simplificada.png` não é simplificado** — é o logo completo (texto + 5 animais). A 48 px na gaveta de apps o nome fica ilegível, que é justamente o problema que os dois arquivos deveriam resolver | Legibilidade do ícone | § 3.1 |
+| P | **`background-anonovo.png` é fotorrealista**, enquanto os outros cinco são cartoon. Sobre ele, os animais destoam | Coerência visual | § 3.1 |
 
 ### Resolvidas
 
@@ -671,6 +694,8 @@ Registrado para evitar ambiguidade — não faz parte da primeira entrega:
 | F | Duração real de `macaco.mp3` (VBR) | ✅ **4,00 s** (informado pelo cliente) |
 | E | Criar IDs próprios no AdMob | ✅ **Entregues** em [admob.MD](admob.MD) — registrados em § 7 |
 | G | Sons de 4 s excedem a faixa de 3 s | ✅ **Faixa passa a 4,5 s**, sem cortar os áudios |
-| I | Entrega dos backgrounds temáticos | ✅ **Entregues** — Páscoa, Festa Junina, Halloween e Natal (§ 3.1) |
+| I | Entrega dos backgrounds temáticos | ✅ **Entregues** — Páscoa, Festa Junina, Halloween, Natal e Ano Novo (§ 3.1) |
+| J | Validar `logo-simplificada.png` na safe zone de 66% | ✅ **Validado** — o `npm run icons` gera `DEPLOY/store-assets/validacao-safe-zone.png` com a máscara circular aplicada; o logo sobrevive ao corte. Segue de pé a pendência **O**, sobre legibilidade em tamanho pequeno |
+| L | Renomear `backgroung-natal.png` → `background-natal.png` | ✅ **Tratado no pipeline** — `build-assets.mjs` mapeia a grafia de origem e grava `background-natal.webp`. O arquivo original em `PROJECT/` fica intocado, como manda § 3 |
 | — | Definir o eixo dos temas (ambiental ou sazonal) | ✅ Os 4 assets são de festa → **sazonal por data** |
 | — | Música de fundo pesada (1.927 KB) | ✅ **Comprimida para 723 KB** (mono, 96 kbps) |

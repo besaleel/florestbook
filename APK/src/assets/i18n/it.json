@@ -1,0 +1,55 @@
+{
+  "inicio": {
+    "boasVindas": "Benvenuto su Florest Book!",
+    "campoNome": "Come ti chiami?",
+    "comecar": "Inizia",
+    "ola": "Ciao, {{nome}}!"
+  },
+  "animais": {
+    "elefante": "Elefante",
+    "leao": "Leone",
+    "lobo": "Lupo",
+    "macaco": "Scimmia",
+    "sapo": "Rana"
+  },
+  "silabas": {
+    "elefante": "E-LE-FAN-TE",
+    "leao": "LE-O-NE",
+    "lobo": "LU-PO",
+    "macaco": "SCIM-MI-A",
+    "sapo": "RA-NA"
+  },
+  "temas": {
+    "standard": "Foresta",
+    "pascoa": "Pasqua",
+    "festejunina": "Festa di San Giovanni",
+    "halloween": "Halloween",
+    "natal": "Natale",
+    "anonovo": "Capodanno"
+  },
+  "menu": {
+    "idioma": "Lingua",
+    "background": "Scenario",
+    "som": "Suono",
+    "somLigado": "Suono attivo",
+    "somDesligado": "Suono disattivato"
+  },
+  "anuncios": {
+    "remover": "Rimuovi la pubblicità",
+    "titulo": "Rimuovi la pubblicità",
+    "descricao": "Gioca senza pubblicità, per sempre.",
+    "comprar": "Acquista",
+    "restaurar": "Ripristina acquisto",
+    "cancelar": "Annulla"
+  },
+  "barreiraParental": {
+    "titulo": "Solo per adulti",
+    "instrucao": "Quanto fa {{a}} × {{b}}?",
+    "erro": "Risposta sbagliata. Riprova.",
+    "confirmar": "Conferma"
+  },
+  "legal": {
+    "termos": "Condizioni d'uso",
+    "privacidade": "Informativa sulla privacy"
+  }
+}

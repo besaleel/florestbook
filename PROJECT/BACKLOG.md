@@ -1,4 +1,4 @@
-# BACKLOG — FLOREST BOOK
+﻿# BACKLOG — FLOREST BOOK
 
 Lista de atividades derivada de [ESPECIFICATION.md](../DOC/ESPECIFICATION.md).
 
@@ -8,49 +8,49 @@ Lista de atividades derivada de [ESPECIFICATION.md](../DOC/ESPECIFICATION.md).
 
 ## Fase 0 — Fundação
 
-- [ ] **0.1** Repositório git inicializado com `.gitignore` protegendo
+- [x] **0.1** Repositório git inicializado com `.gitignore` protegendo
       `node_modules/`, `APK/www/`, `local.properties`, **`keystore.properties`**,
       **`*.jks`** e `DEPLOY/*.aab`. As duas entradas em negrito são de
       segurança: senhas e chave de assinatura nunca vão para o repositório
       (ver [DOC/GERAR-AAB.md](../DOC/GERAR-AAB.md))
-- [ ] **0.2** Projeto criado em `APK/` — **Ionic 8 + Angular 20**
-- [ ] **0.3** Capacitor 8 + plataforma Android; `appId=com.florestbook.app`,
+- [x] **0.2** Projeto criado em `APK/` — **Ionic 8 + Angular 20.3**
+- [x] **0.3** Capacitor 8.4 + plataforma Android; `appId=com.florestbook.app`,
       `appName=Florest Book`
-- [ ] **0.4** Orientação travada em **retrato** (`android:screenOrientation`
+- [x] **0.4** Orientação travada em **retrato** (`android:screenOrientation`
       no `AndroidManifest.xml`)
-- [ ] **0.5** `<title>` do `index.html` definido como "Florest Book" (o
-      template do Ionic vem com "Ionic App")
-- [ ] **0.6** Build validado: `npm run build` + `npx cap sync` +
-      `gradlew assembleDebug` → `app-debug.apk`
-- [ ] **0.7** APK instalado e aberto em aparelho real
+- [x] **0.5** `<title>` do `index.html` definido como "Florest Book"
+- [x] **0.6** Build validado: `npm run build` + `npx cap sync` +
+      `gradlew assembleDebug` → `app-debug.apk` (9,8 MB)
+- [ ] **0.7** APK instalado e aberto em aparelho real *(depende de você)*
 
 ## Fase 1 — Pipeline de assets
 
-- [ ] **1.1** `APK/tools/build-assets.mjs` (`npm run assets`) — converte
+- [x] **1.1** `APK/tools/build-assets.mjs` (`npm run assets`) — converte
       `PROJECT/assets/` → `APK/src/assets/` com sharp, WebP q85
       (ESPECIFICATION § 3.3)
-- [ ] **1.2** 5 animais em WebP ~512×768 — **conferir transparência**
+- [x] **1.2** 5 animais em WebP ~512×768 — **conferir transparência**
       (canal alpha preservado na conversão)
-- [ ] **1.3** **5 backgrounds** em WebP ~1080×1620 (`standard`, `pascoa`,
-      `festejunina`, `halloween`, `natal`). O pipeline deve varrer o diretório
-      por padrão de nome, e não por lista fixa — novos temas entram sem alterar
-      o script. Estimativa: ~26 MB em PNG → 2–3 MB em WebP
-- [ ] **1.4** `APK/tools/build-icons.mjs` (`npm run icons`) — ícones Android
+- [x] **1.3** **6 backgrounds** em WebP ~1080×1620 (`standard`, `pascoa`,
+      `festejunina`, `halloween`, `natal`, **`anonovo`**). O pipeline varre o
+      diretório por padrão de nome, não por lista fixa — o Ano Novo entrou sem
+      nenhuma alteração no script, exatamente como previsto.
+      **Resultado: ~26 MB em PNG → 2,03 MB em WebP**
+- [x] **1.4** `APK/tools/build-icons.mjs` (`npm run icons`) — ícones Android
       nas 5 densidades + foreground adaptativo (safe zone 66%) + favicon +
       apple-touch-icon + splash + `DEPLOY/store-assets/icon-512.png` sem alpha
-- [ ] **1.5** ⚠️ **Origem correta de cada logo** (ESPECIFICATION § 3.1):
+- [x] **1.5** ⚠️ **Origem correta de cada logo** (ESPECIFICATION § 3.1):
       ícones e favicon derivam de **`logo-simplificada.png`**; tela inicial e
       splash derivam de **`logo.png`**. São dois arquivos distintos — não usar
       um só para tudo
-- [ ] **1.6** Validar `logo-simplificada.png` dentro da **safe zone de 66%** do
+- [x] **1.6** Validar `logo-simplificada.png` dentro da **safe zone de 66%** do
       ícone adaptativo: gerar o ícone, aplicar máscara circular e confirmar que
       o elemento central sobrevive ao corte *(pendência J)*
-- [ ] **1.7** ⚠️ **Arquivos que o pipeline deve ignorar** em `PROJECT/assets/`:
+- [x] **1.7** ⚠️ **Arquivos que o pipeline deve ignorar** em `PROJECT/assets/`:
       `flaicon.ico` (formato não suportado pelo Android) e
       **`modelo-sugerido-posicao-animais.png`** (guia de composição, não é asset
       do jogo). O modelo tem 1024×1536, **a mesma dimensão dos backgrounds** —
       uma varredura por dimensão o embarcaria por engano
-- [ ] **1.8** Processar os 5 sons dos animais: normalizar volume e reduzir para
+- [x] **1.8** Processar os 5 sons dos animais: normalizar volume e reduzir para
       mono 96 kbps. **Sem corte de duração** — a faixa foi dimensionada em 4,5 s
       justamente para não cortar (ESPECIFICATION § 3.4).
       Comando de referência (ffmpeg):
@@ -60,53 +60,54 @@ Lista de atividades derivada de [ESPECIFICATION.md](../DOC/ESPECIFICATION.md).
         -ac 1 -ar 44100 -b:a 96k <destino>
       ```
       Estimativa: ~411 KB → ~100 KB
-- [ ] **1.9** Sons copiados para `APK/src/assets/sounds/` — automatizar dentro
+- [x] **1.9** Sons copiados para `APK/src/assets/sounds/` — automatizar dentro
       de `npm run assets`
-- [ ] **1.10** Música de fundo: já comprimida para 723 KB (mono 96 kbps).
+- [x] **1.10** Música de fundo: já comprimida para 723 KB (mono 96 kbps).
       Embarcar como `assets/sounds/background-music.mp3`
 - [ ] **1.11** Ouvir a música comprimida em **aparelho real**. O `.wav` de
       origem está a 30.357 Hz (taxa incomum); se houver chiado ou abafamento,
       reencodar a partir do `.wav`, não do MP3 de 256 kbps *(pendência K)*
-- [ ] **1.12** Arquivos que **não entram no build**: `elefante02.mp3`
+- [x] **1.12** Arquivos que **não entram no build**: `elefante02.mp3`
       (descartado), `ORIGINAL-background-sound.mp3` e `background-sound.wav`
       (fontes). Conferir que o pipeline não os copia
-- [ ] **1.13** Extrair **uma cor de borda por tema** para as sobras do palco
+- [x] **1.13** Extrair **uma cor de borda por tema** para as sobras do palco
       (ESPECIFICATION § 5) — verde nos diurnos, tons escuros no Halloween e no
       Natal. Definir também a cor sólida de fundo do splash
-- [ ] **1.14** Conferir peso total dos assets embarcados — estimativa < 2 MB
-      (ESPECIFICATION § 3.3)
+- [x] **1.14** Conferir peso total dos assets embarcados — **2,90 MB**
+      (2,03 MB de imagens + 0,87 MB de som). APK debug: **9,8 MB**, bem dentro
+      da meta de 30 MB (ESPECIFICATION § 3.3)
 - [ ] **1.15** *(opcional, Fase 7)* Reduzir os ícones SVG que o Ionic embarca
       por padrão, mantendo só os efetivamente usados
 
 ## Fase 2 — Núcleo do app
 
-- [ ] **2.1** `AnimalService` — catálogo dos 5 animais com posição em %,
+- [x] **2.1** `AnimalService` — catálogo dos 5 animais com posição em %,
       calibração do rosto (`object-position` medido por animal) e tempos de
       idle defasados
-- [ ] **2.2** Chaves internas **sem acento**: `elefante | leao | lobo | macaco |
+- [x] **2.2** Chaves internas **sem acento**: `elefante | leao | lobo | macaco |
       sapo`. A mesma chave nomeia PNG, MP3 e chave de tradução
       (ESPECIFICATION § 3.2)
-- [ ] **2.3** `SettingsService` com Capacitor Preferences + signals: `nome`,
+- [x] **2.3** `SettingsService` com Capacitor Preferences + signals: `nome`,
       `idioma`, `som`, `background`, `backgroundEscolhidoManualmente`
-- [ ] **2.4** `@ngx-translate` **v18** (`provideTranslateService` +
+- [x] **2.4** `@ngx-translate` **v18** (`provideTranslateService` +
       `provideTranslateHttpLoader`), JSON local
-- [ ] **2.5** Traduções dos 6 idiomas — mesmo conjunto de chaves em todos
+- [x] **2.5** Traduções dos 6 idiomas — mesmo conjunto de chaves em todos
       (validar contagem)
-- [ ] **2.6** Nomes silabados por idioma (ESPECIFICATION § 4.2). Monossílabos
+- [x] **2.6** Nomes silabados por idioma (ESPECIFICATION § 4.2). Monossílabos
       (EN `WOLF`/`FROG`, FR `LOUP`, DE `WOLF`/`FROSCH`) ficam **sem hífen** —
       separá-los seria incorreto
 - [ ] **2.7** Revisão da separação silábica por falante nativo dos 6 idiomas
       *(pendência H)*
-- [ ] **2.8** Idioma do aparelho no primeiro uso, com recuo para EN
+- [x] **2.8** Idioma do aparelho no primeiro uso, com recuo para EN
 
 ## Fase 3 — Tela inicial
 
-- [ ] **3.1** Layout: logo (`logo.png`), boas-vindas, botão "Começar" grande
-- [ ] **3.2** Campo de nome da criança (persistido, opcional — jogo funciona
+- [x] **3.1** Layout: logo (`logo.png`), boas-vindas, botão "Começar" grande
+- [x] **3.2** Campo de nome da criança (persistido, opcional — jogo funciona
       sem nome)
-- [ ] **3.3** Seletor de idioma com bandeiras, troca imediata
-- [ ] **3.4** Botão de música de fundo (liga/desliga, persistido)
-- [ ] **3.5** Navegação para a tela principal
+- [x] **3.3** Seletor de idioma com bandeiras, troca imediata
+- [x] **3.4** Botão de música de fundo (liga/desliga, persistido)
+- [x] **3.5** Navegação para a tela principal
 
 ## Fase 4 — Tela principal (a floresta)
 
@@ -159,35 +160,35 @@ festa, então a seleção automática **por data** é o mecanismo desta versão.
 
 Regras completas em ESPECIFICATION § 4.3. Depende de 2.3 (`SettingsService`).
 
-- [ ] **4B.1** ⚠️ **Renomear `backgroung-natal.png` → `background-natal.png`**
+- [x] **4B.1** ⚠️ **Renomear `backgroung-natal.png` → `background-natal.png`**
       *(pendência L)*. O arquivo veio com "backgrou**ng**" (G no lugar do D).
       Sem isso o tema de Natal some silenciosamente, ignorado pelo recuo de
       4B.3 — falha difícil de diagnosticar
-- [ ] **4B.2** Registro de temas dirigido por dados, conforme a interface `Tema`
+- [x] **4B.2** Registro de temas dirigido por dados, conforme a interface `Tema`
       e a tabela de ESPECIFICATION § 4.3. Chaves: `standard`, `pascoa`,
       `festejunina`, `halloween`, `natal` — **sem acento e sem hífen**
-- [ ] **4B.3** ⚠️ **Recuo seguro:** tema cujo asset não exista é ignorado,
+- [x] **4B.3** ⚠️ **Recuo seguro:** tema cujo asset não exista é ignorado,
       caindo em `standard` sem erro nem tela em branco (proteção para temas
       futuros e para falhas de nomenclatura)
 - [ ] **4B.4** Seletor manual com os 5 temas: liga
       `backgroundEscolhidoManualmente = true`. **A escolha do usuário nunca é
       sobrescrita** por seleção automática
-- [ ] **4B.5** Todos os temas disponíveis no seletor em qualquer idioma e
+- [x] **4B.5** Todos os temas disponíveis no seletor em qualquer idioma e
       qualquer época do ano
 - [ ] **4B.6** Rótulos dos 5 temas traduzidos nos 6 idiomas *(pendência M)*
-- [ ] **4B.7** `SeasonalService.domingoDePascoa(ano)` — computus gregoriano
+- [x] **4B.7** `SeasonalService.domingoDePascoa(ano)` — computus gregoriano
       (Meeus/Jones/Butcher), offline. Código pronto em ESPECIFICATION § 4.3
-- [ ] **4B.8** `temaDaData(data, idioma)`: aplica as 4 janelas (Páscoa −7/+1;
+- [x] **4B.8** `temaDaData(data, idioma)`: aplica as 4 janelas (Páscoa −7/+1;
       Festa Junina 01–30/06; Halloween 24–31/10; Natal 01–31/12), retornando
       `standard` fora de época e resolvendo sobreposição pela **janela mais
       curta**
-- [ ] **4B.9** Restringir **Festa Junina ao PT**. Nos demais idiomas segue
+- [x] **4B.9** Restringir **Festa Junina ao PT**. Nos demais idiomas segue
       disponível na troca manual
 - [ ] **4B.10** Aplicar na abertura do app e ao retornar do segundo plano,
       **somente** se `backgroundEscolhidoManualmente == false`
-- [ ] **4B.11** Testes unitários da Páscoa 2024–2032 (31/03, 20/04, 05/04,
+- [x] **4B.11** Testes unitários da Páscoa 2024–2032 (31/03, 20/04, 05/04,
       28/03, 16/04, 01/04, 21/04, 13/04, 28/03)
-- [ ] **4B.12** Testar bordas: primeiro e último dia de cada janela, virada de
+- [x] **4B.12** Testar bordas: primeiro e último dia de cada janela, virada de
       ano (31/12 → 01/01) e ano bissexto
 - [ ] **4B.13** Verificação manual com a data do aparelho alterada, confirmando
       que a escolha manual nunca é sobrescrita
@@ -284,7 +285,7 @@ Regras completas em ESPECIFICATION § 4.3. Depende de 2.3 (`SettingsService`).
       **Keystore próprio deste app** — não reaproveitar o de outro projeto.
       Perder o arquivo impede atualizar o `com.florestbook.app` para sempre;
       backup em dois lugares + ativar Play App Signing
-- [ ] **7.6a** Bloco de assinatura no `APK/android/app/build.gradle` lendo
+- [x] **7.6a** Bloco de assinatura no `APK/android/app/build.gradle` lendo
       `keystore.properties`, com aviso audível quando ausente (GERAR-AAB § 3) —
       sem isso o release sai assinado com a chave de **debug** e é rejeitado
 - [ ] **7.7** Definir `versionCode` / `versionName` iniciais (1 / 1.0.0)
@@ -320,6 +321,20 @@ Regras completas em ESPECIFICATION § 4.3. Depende de 2.3 (`SettingsService`).
       temas apenas somando uma entrada ao registro
 
 ---
+
+## Achados desta entrega (31/07/2026)
+
+Coisas descobertas ao construir as Fases 0–3, que não estavam previstas:
+
+| # | Achado | Situação |
+|---|--------|----------|
+| 1 | **6º background entregue:** `background-anonovo.png` estava em `PROJECT/assets/` sem constar na especificação | ✅ Registrado como tema `anonovo`, janela **25/12–05/01**. O Natal foi encurtado para **01–24/12** para não colidir. É a única janela que atravessa a virada do ano |
+| 2 | **O logo diz "ForestBook"**, com a grafia inglesa correta, enquanto o app se chama "Florest Book" (§ 7) | ⚠️ *Pendência N* — **decisão sua**: qual grafia vale na loja e na tela? |
+| 3 | **`logo-simplificada.png` é idêntico em complexidade ao `logo.png`** — texto + 5 animais. Reduzido a 48 px o nome fica ilegível, que é exatamente o problema que a existência dos dois arquivos deveria evitar (§ 3.1) | ⚠️ *Pendência O* — sugestão: uma versão só com um animal ou o livro, sem texto |
+| 4 | **`background-anonovo.png` é fotorrealista**; os outros cinco são cartoon, como os animais | ⚠️ *Pendência P* — manter ou pedir versão em cartoon? |
+| 5 | Grafia `backgroung-natal.png` *(pendência L)* | ✅ Resolvido **no pipeline**, sem tocar no original: `build-assets.mjs` mapeia a grafia e grava `background-natal.webp` |
+| 6 | Safe zone de 66% *(pendência J)* | ✅ Validada — `npm run icons` gera a prova com máscara circular em `DEPLOY/store-assets/validacao-safe-zone.png` |
+| 7 | O keystore `florestbook-release.jks` **já existe** na raiz do projeto | ✅ Fora do git (`.gitignore`). Falta só o `keystore.properties` com as senhas, quando for gerar o AAB |
 
 ## Pendências do cliente
 
