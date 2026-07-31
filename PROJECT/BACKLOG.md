@@ -337,6 +337,34 @@ Regras completas em ESPECIFICATION § 4.3. Depende de 2.3 (`SettingsService`).
 
 ---
 
+## Repositório publicado (31/07/2026)
+
+**https://github.com/besaleel/florestbook** — público.
+
+Os assets originais (`PROJECT/assets/` e `PROJECT/sounds/`) **não estão no
+repositório**: são obra comercial e ficam apenas na sua máquina. Como já
+tinham sido versionados nos primeiros commits, o histórico foi reescrito com
+`git filter-branch` **antes** da publicação, para que os arquivos nunca
+existissem no repo público. O repositório caiu de 54 MB para 9,7 MB.
+
+> ⚠️ **Guarde um backup próprio de `PROJECT/assets` e `PROJECT/sounds`.** O
+> GitHub deixou de ser cópia de segurança deles. Sem esses arquivos,
+> `npm run assets` e `npm run icons` não têm o que converter — o
+> [README](../README.md) registra isso para quem clonar.
+
+Documentos legais publicados via **GitHub Pages**, servindo de `/docs`:
+
+| Documento | URL |
+|-----------|-----|
+| Índice | `https://besaleel.github.io/florestbook/` |
+| Termo de Uso | `https://besaleel.github.io/florestbook/termos-de-uso.html` |
+| Política de Privacidade | `https://besaleel.github.io/florestbook/politica-privacidade.html` |
+
+O build do Pages concluiu com status `built` e sem erro. **A verificação de
+HTTP 200 (item 7.4) continua com você:** o ambiente onde o código foi
+desenvolvido não tem saída HTTP para validar as URLs de fora. Abra os três
+links antes de submeter à Play Console, que valida o link da política.
+
 ## Teste em aparelho real — correções (31/07/2026)
 
 Pontos levantados por você no primeiro teste em aparelho, e o que foi feito:
