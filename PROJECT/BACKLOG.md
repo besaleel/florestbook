@@ -288,12 +288,12 @@ Regras completas em ESPECIFICATION § 4.3. Depende de 2.3 (`SettingsService`).
 - [x] **7.3** Nos dois documentos, declarar explicitamente o **Compromisso com
       a Política para Famílias do Google Play** e a ausência de coleta de dados
       de crianças (ESPECIFICATION § 6.1)
-- [ ] **7.4** Publicar os documentos em URL pública e verificar (HTTP 200,
+- [x] **7.4** Publicar os documentos em URL pública e verificar (HTTP 200,
       conteúdo idêntico ao gerado em `DEPLOY/`)
 - [x] **7.5** Links para os dois documentos na **tela inicial**, abrindo no
       navegador do sistema via Capacitor Browser — exigência da Política para
       Famílias para links externos
-- [ ] **7.6** ⚠️ **Criar o keystore `florestbook-release.jks`** (alias
+- [x] **7.6** ⚠️ **Criar o keystore `florestbook-release.jks`** (alias
       `florestbook`, RSA 2048, `-validity 10000`) e configurar
       `APK/android/keystore.properties` — ambos **fora do git**. Passo a passo
       em [DOC/GERAR-AAB.md § 2](../DOC/GERAR-AAB.md).
@@ -303,21 +303,25 @@ Regras completas em ESPECIFICATION § 4.3. Depende de 2.3 (`SettingsService`).
 - [x] **7.6a** Bloco de assinatura no `APK/android/app/build.gradle` lendo
       `keystore.properties`, com aviso audível quando ausente (GERAR-AAB § 3) —
       sem isso o release sai assinado com a chave de **debug** e é rejeitado
-- [ ] **7.7** Definir `versionCode` / `versionName` iniciais (1 / 1.0.0)
-- [ ] **7.8** Ícone 512×512 sem alpha → `DEPLOY/store-assets/icon-512.png`
-- [ ] **7.9** Feature graphic 1024×500 + screenshots
-- [ ] **7.10** Descrições da loja nos 6 idiomas
+- [x] **7.7** Definir `versionCode` / `versionName` iniciais (1 / 1.0.0)
+- [x] **7.8** Ícone 512×512 sem alpha → `DEPLOY/store-assets/icon-512.png`
+- [x] **7.9** Feature graphic 1024×500 + screenshots
+- [x] **7.10** Descrições da loja nos 6 idiomas
 - [ ] **7.11** Confirmar disponibilidade do nome "Florest Book" na Play Store
-      (ESPECIFICATION § 7 — "Florest" não é a grafia inglesa de "forest")
-- [ ] **7.12** Classificação etária (IARC) coerente com o público de 2–6 anos
+      *(na Play Console, ao criar o app)*
+- [ ] **7.12** Classificação etária (IARC) — respostas prontas em
+      [DEPLOY/PUBLICAR.md § 6](../DEPLOY/PUBLICAR.md). Resultado esperado: Livre
 - [ ] **7.13** Questionário **Segurança dos Dados** declarando "nenhum dado
-      coletado", e marcar na Play Console a exibição da mensagem
-      **"Compromisso com a Política para Famílias do Google Play"**
-- [ ] **7.14** Conferir peso final do AAB — meta < 30 MB
-- [ ] **7.15** AAB assinado gerado em `DEPLOY/florestbook-release-v01.aab`,
-      seguindo [DOC/GERAR-AAB.md](../DOC/GERAR-AAB.md). Conferir na saída do
-      Gradle que **não** aparece o aviso de `keystore.properties nao encontrado`
-- [ ] **7.16** Registrar o build na tabela "Histórico de releases" do
+      coletado" + mensagem "Compromisso com a Política para Famílias" —
+      respostas prontas em [DEPLOY/PUBLICAR.md § 5](../DEPLOY/PUBLICAR.md)
+- [x] **7.14** Conferir peso final do AAB — **12,62 MB**, com R8 e
+      `shrinkResources` ativos. Bem dentro da meta de 30 MB
+- [x] **7.15** AAB assinado gerado em `DEPLOY/florestbook-release-v01.aab`.
+      **Assinatura conferida por duas vias:** o Gradle não emitiu o aviso de
+      `keystore.properties nao encontrado`, e o SHA-256 do certificado do APK
+      equivalente (`apksigner`) é **idêntico** ao do keystore
+      (`12:4B:66:40:…:F7:31`) — prova de que não foi a chave de debug
+- [x] **7.16** Registrar o build na tabela "Histórico de releases" do
       GERAR-AAB.md (arquivo, `versionCode`, `versionName`)
 - [ ] **7.17** Publicar em teste interno e validar em aparelho real
 - [x] **7.18** ~~Documentar o processo de build~~ — ✅ [DOC/GERAR-AAB.md](../DOC/GERAR-AAB.md)

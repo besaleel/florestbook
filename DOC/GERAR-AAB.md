@@ -151,21 +151,30 @@ npx cap sync android
 Isso gera `APK/www` (build otimizado) e copia para
 `APK/android/app/src/main/assets/public`.
 
-> ### ⚠️ Antes de publicar em produção aberta: trocar os IDs do AdMob
+> ### IDs do AdMob — a troca é automática
 >
-> Durante o desenvolvimento o app usa os **anúncios de teste**
-> ("This is a test ad") — seguro para o teste interno, mas **não gera receita**.
+> Não há constante para trocar à mão. O método `producao()` de
+> `APK/src/app/core/services/ads.service.ts` retorna
+> `Capacitor.isNativePlatform() && !ngDevMode`, e o compilador resolve
+> `ngDevMode` em tempo de build:
 >
-> Em `APK/src/app/core/services/ads.service.ts`, método `producao()`:
-> trocar `return false;` por `return Capacitor.isNativePlatform();`
+> | Build | Bloco usado | Clicar no anúncio |
+> |-------|-------------|-------------------|
+> | `assembleDebug` | teste (`…3940256099942544/6300978111`) | seguro |
+> | `bundleRelease` | **produção** (`…3480885465464323/8466632581`) | **nunca** |
 >
-> Confira no bundle gerado que o bloco de **produção** está em uso:
+> Para conferir num bundle já gerado — o código sai minificado, então procure
+> em todos os chunks, não só no `main`:
 > ```powershell
-> Select-String -Path "APK\www\main*.js" -Pattern "3480885465464323/8466632581"
+> Get-ChildItem APK\www -Recurse -Include *.js |
+>   Select-String -Pattern "3480885465464323/8466632581" -SimpleMatch |
+>   Select-Object -ExpandProperty Filename
 > ```
+> No release, `producao()` compila para `isNativePlatform()&&!0` — sempre
+> verdadeiro em aparelho.
 >
-> Depois da troca, **nunca clique nos próprios anúncios** — o Google suspende
-> a conta AdMob. Ver Backlog 6.13.
+> ⚠️ **Nunca clique nos próprios anúncios em build de release.** O Google
+> trata clique do desenvolvedor como fraude e suspende a conta AdMob.
 
 ## 5. Gerar o AAB assinado
 
@@ -223,7 +232,7 @@ Copy-Item "C:\Sistemas\FLORESTBOOK\APK\android\app\build\outputs\bundle\release\
 
 | Arquivo | versionCode | versionName | Observações |
 |---------|-------------|-------------|-------------|
-| — | — | — | *Nenhum release gerado ainda.* |
+| `florestbook-release-v01.aab` | 1 | 1.0.0 | Primeiro release. 12,62 MB. Assinado com `florestbook-release.jks` (SHA-256 `12:4B:66:40:…:F7:31`, conferido contra o APK). R8 + `shrinkResources` ativos. AdMob no bloco de **produção**. |
 
 ---
 

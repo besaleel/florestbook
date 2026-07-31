@@ -1,21 +1,43 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
+# Regras do R8 para o Florest Book.
 #
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# O Capacitor liga JavaScript e Java por REFLEXAO: o WebView chama metodos
+# anotados com @PluginMethod pelo nome, em tempo de execucao. O R8 nao ve
+# essas chamadas e removeria ou renomearia tudo, quebrando os plugins em
+# silencio — o app compila, instala e falha so ao tocar um botao.
+#
+# Por isso as regras abaixo nao sao opcionais quando `minifyEnabled true`.
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# --- Capacitor: nucleo e plugins ---
+-keep public class com.getcapacitor.** { *; }
+-keep public class * extends com.getcapacitor.Plugin { *; }
+-keepclassmembers class * extends com.getcapacitor.Plugin {
+    @com.getcapacitor.PluginMethod public <methods>;
+    @com.getcapacitor.annotation.CapacitorPlugin <fields>;
+}
+-keep @com.getcapacitor.annotation.CapacitorPlugin class * { *; }
+-keep @com.getcapacitor.NativePlugin class * { *; }
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Plugins usados por este app (ads, browser, preferences, app, keyboard...).
+-keep class com.capacitorjs.plugins.** { *; }
+-keep class com.getcapacitor.community.admob.** { *; }
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# --- Interface JavaScript do WebView ---
+# Sem isto, `window.Capacitor` perde os metodos expostos ao JS.
+-keepclassmembers class * {
+    @android.webkit.JavascriptInterface <methods>;
+}
+
+# --- Google Mobile Ads (AdMob) ---
+# O SDK carrega classes por nome; o proprio Google recomenda preserva-las.
+-keep class com.google.android.gms.ads.** { *; }
+-keep class com.google.android.gms.internal.ads.** { *; }
+-dontwarn com.google.android.gms.**
+
+# --- Anotacoes e assinaturas usadas por reflexao ---
+-keepattributes *Annotation*, Signature, InnerClasses, EnclosingMethod
+
+# --- Rastreabilidade de falhas ---
+# Mantem numero de linha nas stack traces, escondendo o nome do arquivo.
+# Sem isto, um relatorio de erro da Play Console vem ilegivel.
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile

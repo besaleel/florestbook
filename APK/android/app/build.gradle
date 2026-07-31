@@ -47,8 +47,12 @@ android {
             if (hasKeystore) {
                 signingConfig signingConfigs.release
             }
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // R8 + remocao de recursos nao usados. O SDK do AdMob e o
+            // Capacitor trazem muito codigo que este app nao chama; sem isso
+            // o pacote carrega vários MB desnecessarios (BACKLOG 7.14).
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }

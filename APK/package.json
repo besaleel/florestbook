@@ -7,6 +7,7 @@
     "start": "ng serve",
     "assets": "node tools/build-assets.mjs",
     "icons": "node tools/build-icons.mjs",
+    "store": "node tools/build-store.mjs",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
