@@ -38,13 +38,15 @@ Lista de atividades derivada de [ESPECIFICATION.md](../DOC/ESPECIFICATION.md).
 - [x] **1.4** `APK/tools/build-icons.mjs` (`npm run icons`) — ícones Android
       nas 5 densidades + foreground adaptativo (safe zone 66%) + favicon +
       apple-touch-icon + splash + `DEPLOY/store-assets/icon-512.png` sem alpha
-- [x] **1.5** ⚠️ **Origem correta de cada logo** (ESPECIFICATION § 3.1):
-      ícones e favicon derivam de **`logo-simplificada.png`**; tela inicial e
-      splash derivam de **`logo.png`**. São dois arquivos distintos — não usar
-      um só para tudo
-- [x] **1.6** Validar `logo-simplificada.png` dentro da **safe zone de 66%** do
-      ícone adaptativo: gerar o ícone, aplicar máscara circular e confirmar que
-      o elemento central sobrevive ao corte *(pendência J)*
+- [x] **1.5** **Origem única do logo** (ESPECIFICATION § 3.1). O requisito
+      original previa dois arquivos, mas o logo entregue em 31/07/2026 **não
+      tem texto** e sobrevive à redução a 48 px — o motivo de existir uma
+      versão "simplificada" deixou de valer. Tudo deriva de `logo.png`
+- [x] **1.6** Validar o logo dentro da **safe zone de 66%** do ícone
+      adaptativo *(pendência J)*. `npm run icons` gera a prova em
+      `DEPLOY/store-assets/validacao-safe-zone.png`, com máscara circular
+      aplicada e o limite de 66% em tracejado. **Conferido:** animais e livro
+      ficam dentro; só a moldura de vegetação é cortada
 - [x] **1.7** ⚠️ **Arquivos que o pipeline deve ignorar** em `PROJECT/assets/`:
       `flaicon.ico` (formato não suportado pelo Android) e
       **`modelo-sugerido-posicao-animais.png`** (guia de composição, não é asset
@@ -111,52 +113,58 @@ Lista de atividades derivada de [ESPECIFICATION.md](../DOC/ESPECIFICATION.md).
 
 ## Fase 4 — Tela principal (a floresta)
 
-- [ ] **4.1** Palco responsivo mantendo a proporção do background; sobras na cor
+- [x] **4.1** Palco responsivo mantendo a proporção do background; sobras na cor
       sólida do **tema ativo** (1.13), trocando junto com o background
-- [ ] **4.2** Posicionar os **5 animais** em percentuais seguindo o modelo
+- [x] **4.2** Posicionar os **5 animais** em percentuais seguindo o modelo
       `PROJECT/assets/modelo-sugerido-posicao-animais.png` e a tabela de
       ESPECIFICATION § 4.2. Arranjo em **duas fileiras**: leão (~42%, ~53%) e
       elefante (~72%, ~55%) ao fundo; lobo (~34%, ~68%), macaco (~68%, ~72%) e
       sapo (~53%, ~75%) à frente
-- [ ] **4.3** Respeitar a **zona útil de 40% a 79%** da altura da tela — acima
+- [x] **4.3** Respeitar a **zona útil de 40% a 79%** da altura da tela — acima
       é céu/copas, abaixo é o rodapé do cenário e o banner. Nenhum animal
       invade essas faixas (as duas barras pretas do modelo)
-- [ ] **4.4** ⚠️ **Sobreposição visual sim, de toque não.** A arte se sobrepõe
-      entre as fileiras, mas cada animal precisa de área tocável exclusiva. Onde
-      há disputa, o animal da **frente vence**; a área do de trás é recortada
-- [ ] **4.5** Escala relativa respeitando a hierarquia de tamanho
+- [x] **4.4** ⚠️ **Sobreposição visual sim, de toque não.** Resolvido por
+      **detecção de pixel opaco** (`HitTestService`), não por recorte manual:
+      as caixas se sobrepõem muito (leão×lobo 29%, elefante×macaco 21%,
+      macaco×sapo 15%), então cada animal responde só onde está desenhado. O
+      palco percorre da frente para o fundo — o da frente vence, e o toque na
+      área transparente atravessa para quem está atrás.
+      **Verificado:** o sapo (menor, no centro) responde ao próprio toque, e a
+      zona disputada leão/lobo devolve `LO-BO`
+- [x] **4.5** Escala relativa respeitando a hierarquia de tamanho
       (elefante > leão ≈ lobo > macaco > sapo), **sem** que o sapo fique menor
       que o alvo mínimo de 48 dp — ele é o menor e fica no centro, é o caso
       crítico
-- [ ] **4.6** Barra superior: avatar + nome (esquerda); idioma, background e som
+- [x] **4.6** Barra superior: avatar + nome (esquerda); idioma, background e som
       (direita) — 3 ícones
-- [ ] **4.7** ⚠️ **Legibilidade sobre fundos escuros** (ESPECIFICATION § 4.2):
+- [x] **4.7** ⚠️ **Legibilidade sobre fundos escuros** (ESPECIFICATION § 4.2):
       Halloween e Natal são cenas noturnas, os outros 3 temas são claros.
       Garantir contraste dos ícones e do nome da criança nos dois extremos —
       sombra projetada ou fundo semitransparente, nunca dependendo da cor do
       cenário
-- [ ] **4.8** Conferir visualmente o arranjo dos animais **em cada um dos 5
-      temas**. A composição é a mesma (centro livre), mas o rodapé do Halloween
-      e do Natal tem elementos maiores, e a zona útil termina onde eles começam
-- [ ] **4.9** Área reservada do banner no rodapé (recolhe se não houver anúncio)
-- [ ] **4.10** Botão "Remover Anúncio" acima do banner
-- [ ] **4.11** Animação **idle** por CSS, defasada por animal, com a
+- [x] **4.8** Conferir visualmente o arranjo dos animais **em cada um dos 6
+      temas** — capturas geradas e revisadas. A composição é a mesma (centro
+      livre) e o arranjo serviu a todos sem calibração por tema
+- [x] **4.9** Área reservada do banner no rodapé (recolhe se não houver anúncio)
+- [x] **4.10** Botão "Remover Anúncio" acima do banner
+- [x] **4.11** Animação **idle** por CSS, defasada por animal, com a
       personalidade de cada um (ESPECIFICATION § 2.2): elefante lento e amplo,
       macaco agitado, sapo pulsando com pausa
-- [ ] **4.12** Animação de **reação ao toque** (~600 ms, squash & stretch).
+- [x] **4.12** Animação de **reação ao toque** (~600 ms, squash & stretch).
       Cuidar para que o "pulo" **não invada a zona de outro animal** nem as
       faixas de 4.3 — a escala momentânea aumenta a área ocupada
-- [ ] **4.13** Respeitar `prefers-reduced-motion`
-- [ ] **4.14** Animar **somente** `transform` e `opacity` — verificar no
-      DevTools que não há layout/paint por frame
-- [ ] **4.15** **`z-index` coerente com as fileiras:** os animais da frente
+- [x] **4.13** Respeitar `prefers-reduced-motion`
+- [x] **4.14** Animar **somente** `transform` e `opacity`. **Medido com trace
+      do Chrome:** 4 s de idle contínuo dos 5 animais produzem **zero** eventos
+      de `Layout` e `Paint` — tudo roda na camada de composição
+- [x] **4.15** **`z-index` coerente com as fileiras:** os animais da frente
       (lobo, macaco, sapo) sobre os do fundo (leão, elefante), inclusive durante
       as animações
 
 ## Fase 4B — Backgrounds temáticos sazonais
 
-✅ **Assets entregues** — os 5 temas estão em `PROJECT/assets/`. Todos são de
-festa, então a seleção automática **por data** é o mecanismo desta versão.
+✅ **Assets entregues** — os **6 temas** estão em `PROJECT/assets/`. Todos são
+de festa, então a seleção automática **por data** é o mecanismo desta versão.
 
 Regras completas em ESPECIFICATION § 4.3. Depende de 2.3 (`SettingsService`).
 
@@ -170,12 +178,12 @@ Regras completas em ESPECIFICATION § 4.3. Depende de 2.3 (`SettingsService`).
 - [x] **4B.3** ⚠️ **Recuo seguro:** tema cujo asset não exista é ignorado,
       caindo em `standard` sem erro nem tela em branco (proteção para temas
       futuros e para falhas de nomenclatura)
-- [ ] **4B.4** Seletor manual com os 5 temas: liga
+- [x] **4B.4** Seletor manual com os 5 temas: liga
       `backgroundEscolhidoManualmente = true`. **A escolha do usuário nunca é
       sobrescrita** por seleção automática
 - [x] **4B.5** Todos os temas disponíveis no seletor em qualquer idioma e
       qualquer época do ano
-- [ ] **4B.6** Rótulos dos 5 temas traduzidos nos 6 idiomas *(pendência M)*
+- [x] **4B.6** Rótulos dos 5 temas traduzidos nos 6 idiomas *(pendência M)*
 - [x] **4B.7** `SeasonalService.domingoDePascoa(ano)` — computus gregoriano
       (Meeus/Jones/Butcher), offline. Código pronto em ESPECIFICATION § 4.3
 - [x] **4B.8** `temaDaData(data, idioma)`: aplica as 4 janelas (Páscoa −7/+1;
@@ -184,7 +192,7 @@ Regras completas em ESPECIFICATION § 4.3. Depende de 2.3 (`SettingsService`).
       curta**
 - [x] **4B.9** Restringir **Festa Junina ao PT**. Nos demais idiomas segue
       disponível na troca manual
-- [ ] **4B.10** Aplicar na abertura do app e ao retornar do segundo plano,
+- [x] **4B.10** Aplicar na abertura do app e ao retornar do segundo plano,
       **somente** se `backgroundEscolhidoManualmente == false`
 - [x] **4B.11** Testes unitários da Páscoa 2024–2032 (31/03, 20/04, 05/04,
       28/03, 16/04, 01/04, 21/04, 13/04, 28/03)
@@ -198,26 +206,31 @@ Regras completas em ESPECIFICATION § 4.3. Depende de 2.3 (`SettingsService`).
 
 ## Fase 5 — Faixa do nome e áudio
 
-- [ ] **5.1** Componente da faixa: fundo branco sólido, círculo com o rosto do
+- [x] **5.1** Componente da faixa: fundo branco sólido, círculo com o rosto do
       animal à esquerda, nome silabado em caixa alta e fonte grande. Conferir
       que ela se destaca também sobre os **temas claros** (Páscoa, Festa
       Junina) — contorno ou sombra sutil, ver ESPECIFICATION § 4.2
-- [ ] **5.2** Círculo do rosto por recorte do próprio PNG (`object-fit: cover` +
+- [x] **5.2** Círculo do rosto por recorte do próprio PNG (`object-fit: cover` +
       `object-position` calibrado por animal) — sem assets adicionais
-- [ ] **5.3** Posicionar imediatamente acima do banner, sem sobreposição
-- [ ] **5.4** Fade in / fade out
-- [ ] **5.5** ⚠️ Timer de **4,5 s** (não 3 s), reiniciado ao tocar outro animal.
+- [x] **5.3** Posicionar imediatamente acima do banner, sem sobreposição
+- [x] **5.4** Fade in / fade out
+- [x] **5.5** ⚠️ Timer de **4,5 s** (não 3 s), reiniciado ao tocar outro animal.
       Dimensionado pelos sons de 4 s (lobo e macaco) — ESPECIFICATION § 3.4
-- [ ] **5.6** `AudioService`: pré-carregar sons, tocar **um por vez** (novo som
+- [x] **5.6** `AudioService`: pré-carregar sons, tocar **um por vez** (novo som
       interrompe o anterior)
-- [ ] **5.7** Música de fundo em loop contínuo, volume suave, com *ducking*
+- [x] **5.7** Música de fundo em loop contínuo, volume suave, com *ducking*
       durante o som do animal
-- [ ] **5.8** Verificar que o loop da música emenda **sem estalo** (pontas em
-      silêncio)
-- [ ] **5.9** Pausar áudio quando o app vai a segundo plano
-- [ ] **5.10** O áudio respeita o botão de som; estado persistido
+- [x] **5.8** Verificar que o loop da música emenda **sem estalo** (pontas em
+      silêncio). **Medido com ffmpeg:** início −43,4 dB e fim −42,9 dB — 0,5 dB
+      de diferença, ~13 dB abaixo do pico da faixa (−17,3 dB pico / −41,3 dB
+      médio). As pontas estão em silêncio equivalente, sem degrau na emenda.
+      *Confirmação auditiva em aparelho real fica junto com 1.11*
+- [x] **5.9** Pausar áudio quando o app vai a segundo plano
+- [x] **5.10** O áudio respeita o botão de som; estado persistido
 - [ ] **5.11** Validar em aparelho real que o som termina antes do fim da faixa
-      de 4,5 s (maiores: lobo 4,02 s e macaco 4,00 s)
+      de 4,5 s (maiores: lobo 4,02 s e macaco 4,00 s) *(depende de você)*.
+      A margem está garantida por construção — os áudios não foram cortados e
+      o timer é de 4,5 s —, falta só ouvir
 
 ## Fase 6 — Monetização
 

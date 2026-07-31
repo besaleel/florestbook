@@ -1,0 +1,14 @@
+@if (animal(); as a) {
+  <div class="faixa" role="status" aria-live="polite">
+    <!-- Circulo do rosto: recorte do PNG do animal, calibrado por animal. -->
+    <div class="rosto">
+      <img
+        [src]="imagem()"
+        [alt]="chaveNome() | translate"
+        [style.object-position]="a.rosto"
+      />
+    </div>
+
+    <span class="silabas">{{ chaveSilabas() | translate }}</span>
+  </div>
+}

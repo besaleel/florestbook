@@ -2,25 +2,135 @@
   <!-- As sobras do palco recebem a cor solida do tema ativo
        (ESPECIFICATION 5, BACKLOG 4.1). -->
   <div class="moldura" [style.background]="fundo.corDaBorda()">
-    <div class="palco" [style.background-image]="'url(' + fundo.imagem() + ')'">
-      @if (settings.nome(); as nome) {
-        <div class="cracha">{{ 'inicio.ola' | translate: { nome } }}</div>
+    <div
+      class="palco"
+      [style.background-image]="'url(' + fundo.imagem() + ')'"
+      (pointerdown)="tocarNoPalco($event)"
+    >
+      <!-- Barra superior (BACKLOG 4.6). Os fundos semitransparentes garantem
+           contraste tanto nos temas diurnos quanto nas cenas noturnas. -->
+      <header class="barra">
+        @if (settings.nome(); as nome) {
+          <div class="cracha">
+            <span class="avatar" aria-hidden="true">🧒</span>
+            <span class="nome">{{ nome }}</span>
+          </div>
+        } @else {
+          <span></span>
+        }
+
+        <nav class="acoes">
+          <button
+            type="button"
+            class="acao"
+            [class.ativo]="painel() === 'idioma'"
+            (click)="alternarPainel('idioma')"
+            [attr.aria-label]="'menu.idioma' | translate"
+          >
+            {{ bandeiras[settings.idioma()] }}
+          </button>
+
+          <button
+            type="button"
+            class="acao"
+            [class.ativo]="painel() === 'background'"
+            (click)="alternarPainel('background')"
+            [attr.aria-label]="'menu.background' | translate"
+          >
+            🖼️
+          </button>
+
+          <button
+            type="button"
+            class="acao"
+            (click)="alternarSom()"
+            [attr.aria-label]="
+              (settings.som() ? 'menu.somLigado' : 'menu.somDesligado') | translate
+            "
+          >
+            {{ settings.som() ? '🔊' : '🔇' }}
+          </button>
+        </nav>
+      </header>
+
+      @if (painel() === 'idioma') {
+        <div class="painel painel-idioma">
+          @for (idioma of idiomas; track idioma) {
+            <button
+              type="button"
+              class="opcao-idioma"
+              [class.ativo]="settings.idioma() === idioma"
+              (click)="trocarIdioma(idioma)"
+            >
+              {{ bandeiras[idioma] }}
+            </button>
+          }
+        </div>
       }
 
+      @if (painel() === 'background') {
+        <!-- Os 6 temas ficam disponiveis em qualquer idioma e qualquer epoca
+             do ano: a sazonalidade so define o padrao (BACKLOG 4B.5). -->
+        <div class="painel painel-tema">
+          @for (tema of temas(); track tema.chave) {
+            <button
+              type="button"
+              class="opcao-tema"
+              [class.ativo]="fundo.tema() === tema.chave"
+              (click)="trocarTema(tema.chave)"
+              [attr.aria-label]="rotuloTema(tema.chave) | translate"
+            >
+              <img [src]="assetDoTema(tema.chave)" alt="" />
+              <span>{{ rotuloTema(tema.chave) | translate }}</span>
+            </button>
+          }
+        </div>
+      }
+
+      <!-- Os 5 animais (BACKLOG 4.2-4.5, 4.11-4.12, 4.15).
+           O toque e resolvido pelo palco, por pixel opaco (BACKLOG 4.4): aqui
+           os animais sao apenas imagens, sem area retangular propria. Cada um
+           mantem um botao invisivel so para leitores de tela. -->
       @for (animal of lista; track animal.chave) {
-        <button
-          type="button"
+        <div
           class="animal"
           [class]="'idle-' + animal.chave"
+          [class.reagindo]="reagindo() === animal.chave"
           [style.left.%]="animal.x"
           [style.top.%]="animal.y"
           [style.width.%]="animal.largura"
           [style.z-index]="camada(animal)"
-          [attr.aria-label]="'animais.' + animal.chave | translate"
         >
           <img [src]="imagem(animal)" [alt]="'animais.' + animal.chave | translate" />
-        </button>
+        </div>
       }
+
+      <!-- Acessibilidade: alvos nomeados para leitor de tela, fora do fluxo
+           visual. O jogo em si e operado pelo toque direto na arte. -->
+      <div class="alvos-acessiveis">
+        @for (animal of lista; track animal.chave) {
+          <button type="button" (click)="tocar(animal)">
+            {{ 'animais.' + animal.chave | translate }}
+          </button>
+        }
+      </div>
+
     </div>
+
+    <!-- Rodape ABAIXO do palco: a faixa fica imediatamente acima do banner e
+         nenhum dos dois cobre os animais (ESPECIFICATION 5, BACKLOG 5.3). -->
+    <footer class="rodape">
+      <app-faixa-nome [animal]="animalNaFaixa()" />
+
+      @if (!settings.semAnuncios()) {
+        <button type="button" class="remover-anuncio">
+          {{ 'anuncios.remover' | translate }}
+        </button>
+
+        <!-- Area reservada do banner. Sem rede ela recolhe sozinha, sem
+             quebrar o layout (BACKLOG 4.9, 6.5). -->
+        <div class="banner" aria-hidden="true"></div>
+      }
+    </footer>
   </div>
 </ion-content>

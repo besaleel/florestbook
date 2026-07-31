@@ -1,0 +1,73 @@
+// Faixa do nome do animal (ESPECIFICATION 4.2, BACKLOG 5.1-5.4).
+
+:host {
+  // Altura FIXA, reservada mesmo com a faixa escondida: sem isso o palco
+  // subiria e desceria a cada toque, deslocando os animais sob o dedo da
+  // crianca. `flex-shrink: 0` impede o rodape de espremer o espaco.
+  display: block;
+  flex: 0 0 auto;
+  height: clamp(72px, 20vw, 108px);
+}
+
+.faixa {
+  display: flex;
+  align-items: center;
+  gap: 3vw;
+  width: 100%;
+  height: 100%;
+  padding: 1.6vh 4vw;
+  // Branco solido, como manda a especificacao. Sobre os temas claros
+  // (Pascoa, Festa Junina) o branco puro se dissolveria no cenario, por isso
+  // a borda e a sombra — nao sao decoracao (BACKLOG 5.1).
+  background: #fff;
+  border-top: 3px solid rgb(0 0 0 / 12%);
+  box-shadow: 0 -6px 18px rgb(0 0 0 / 28%);
+  animation: entrar 260ms ease-out;
+}
+
+.rosto {
+  flex: 0 0 auto;
+  width: clamp(56px, 16vw, 88px);
+  aspect-ratio: 1;
+  overflow: hidden;
+  border: 4px solid #4c8334;
+  border-radius: 50%;
+  background: #eaf5e2;
+
+  img {
+    width: 100%;
+    height: 100%;
+    // `cover` + `object-position` por animal recorta a cabeca sem asset extra.
+    object-fit: cover;
+  }
+}
+
+.silabas {
+  flex: 1 1 auto;
+  color: #1f3d14;
+  font-size: clamp(1.5rem, 8vw, 2.6rem);
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+  text-align: center;
+  // Nomes longos (GRE-NOUILLE, E-LE-FAN-TE) nao podem estourar a faixa.
+  overflow-wrap: anywhere;
+}
+
+// Fade in / fade out (BACKLOG 5.4). Somente `transform` e `opacity`.
+@keyframes entrar {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .faixa {
+    animation: none;
+  }
+}
