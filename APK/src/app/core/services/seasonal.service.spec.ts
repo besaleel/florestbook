@@ -49,15 +49,16 @@ describe('SeasonalService', () => {
       expect(servico.temaDaData(new Date(2026, 10, 1), 'en')).toBe('standard');
     });
 
-    it('reconhece Natal de 01 a 24/12', () => {
+    it('reconhece Natal de 01 a 28/12', () => {
       expect(servico.temaDaData(new Date(2026, 11, 1), 'pt')).toBe('natal');
-      expect(servico.temaDaData(new Date(2026, 11, 24), 'pt')).toBe('natal');
+      expect(servico.temaDaData(new Date(2026, 11, 25), 'pt')).toBe('natal');
+      expect(servico.temaDaData(new Date(2026, 11, 28), 'pt')).toBe('natal');
     });
   });
 
   describe('temaDaData — Ano Novo atravessa a virada (BACKLOG 4B.12)', () => {
-    it('assume a partir de 25/12', () => {
-      expect(servico.temaDaData(new Date(2026, 11, 25), 'pt')).toBe('anonovo');
+    it('assume a partir de 29/12', () => {
+      expect(servico.temaDaData(new Date(2026, 11, 29), 'pt')).toBe('anonovo');
       expect(servico.temaDaData(new Date(2026, 11, 31), 'pt')).toBe('anonovo');
     });
 

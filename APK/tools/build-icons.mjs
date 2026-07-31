@@ -1,13 +1,12 @@
-/**
+﻿/**
  * build-icons.mjs — origem unica de logo e icones (ESPECIFICATION 3.1.1).
  *
- * Nada e desenhado a parte: TUDO deriva dos dois PNG de PROJECT/assets/.
+ * Nada e desenhado a parte: TUDO deriva de `PROJECT/assets/logo.png`.
  *
- *   logo-simplificada.png -> icones do app, adaptativo, favicon, PWA, loja
- *   logo.png              -> logo da tela inicial e splash
- *
- * Sao dois arquivos DISTINTOS e nao intercambiaveis (BACKLOG 1.5): o logo
- * completo tem detalhe demais para sobreviver a 48x48 px na gaveta de apps.
+ * O logo entregue em 31/07/2026 e quadrado, com cantos arredondados e alpha
+ * real (28% dos pixels), e NAO tem texto — por isso sobrevive bem a 48x48 px
+ * na gaveta de aplicativos, que era o motivo original de existir uma segunda
+ * arte "simplificada". Com uma fonte so, a consistencia visual e automatica.
  */
 import sharp from 'sharp';
 import { mkdir, writeFile } from 'node:fs/promises';
@@ -16,8 +15,7 @@ import { fileURLToPath } from 'node:url';
 
 const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const ORIGEM = path.join(RAIZ, 'PROJECT', 'assets');
-const LOGO_COMPLETO = path.join(ORIGEM, 'logo.png');
-const LOGO_SIMPLES = path.join(ORIGEM, 'logo-simplificada.png');
+const LOGO = path.join(ORIGEM, 'logo.png');
 
 const RES_ANDROID = path.join(RAIZ, 'APK', 'android', 'app', 'src', 'main', 'res');
 const SRC_ASSETS = path.join(RAIZ, 'APK', 'src', 'assets');
@@ -41,7 +39,17 @@ const DENSIDADES = [
  * transparente para que o elemento central sobreviva ao corte (pendencia J).
  */
 const SAFE_ZONE = 0.66;
-const LADO_ADAPTATIVO = 432;
+
+/**
+ * Ocupacao do logo dentro do foreground adaptativo.
+ *
+ * O minimo exigido e caber na safe zone de 66%, mas usamos 80%: o logo ja e um
+ * quadrado de cantos arredondados, entao inscreve-lo exatamente em 66% deixaria
+ * uma moldura verde dupla — a do proprio logo mais a do fundo adaptativo. Em
+ * 80% a arte preenche a mascara e os cantos, que e o que o Android corta,
+ * continuam sendo area do logo, nao conteudo essencial.
+ */
+const OCUPACAO_ADAPTATIVA = 0.8;
 
 const criados = [];
 
@@ -63,10 +71,10 @@ async function png(origem, destino, lado) {
   await registrar(destino);
 }
 
-/** Logo centrado em `SAFE_ZONE` de um canvas quadrado transparente. */
-async function comSafeZone(origem, destino, lado) {
+/** Logo centrado num canvas quadrado transparente, ocupando `proporcao` dele. */
+async function comSafeZone(origem, destino, lado, proporcao = OCUPACAO_ADAPTATIVA) {
   await garantirPasta(path.dirname(destino));
-  const interno = Math.round(lado * SAFE_ZONE);
+  const interno = Math.round(lado * proporcao);
   const miolo = await sharp(origem)
     .resize(interno, interno, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
     .png()
@@ -82,15 +90,15 @@ async function comSafeZone(origem, destino, lado) {
 }
 
 async function iconesAndroid() {
-  console.log('\n=== ICONES ANDROID (de logo-simplificada.png) ===');
+  console.log('\n=== ICONES ANDROID (de logo.png) ===');
 
   for (const [densidade, lado] of DENSIDADES) {
     const pasta = path.join(RES_ANDROID, `mipmap-${densidade}`);
     // Icone legado: quadrado e arredondado usam a mesma arte.
-    await png(LOGO_SIMPLES, path.join(pasta, 'ic_launcher.png'), lado);
-    await png(LOGO_SIMPLES, path.join(pasta, 'ic_launcher_round.png'), lado);
+    await png(LOGO, path.join(pasta, 'ic_launcher.png'), lado);
+    await png(LOGO, path.join(pasta, 'ic_launcher_round.png'), lado);
     // Foreground adaptativo: 1.5x o lado nominal, com safe zone de 66%.
-    await comSafeZone(LOGO_SIMPLES, path.join(pasta, 'ic_launcher_foreground.png'), Math.round(lado * 1.5));
+    await comSafeZone(LOGO, path.join(pasta, 'ic_launcher_foreground.png'), Math.round(lado * 1.5));
     console.log(`  mipmap-${densidade.padEnd(8)} ${lado}px  (+ foreground adaptativo)`);
   }
 
@@ -130,16 +138,28 @@ async function provaSafeZone() {
   const destino = path.join(STORE_ASSETS, 'validacao-safe-zone.png');
   await garantirPasta(STORE_ASSETS);
 
-  const interno = Math.round(lado * SAFE_ZONE);
-  const miolo = await sharp(LOGO_SIMPLES)
+  // Reproduz o foreground REAL (ocupacao de 80%), nao um caso hipotetico.
+  const interno = Math.round(lado * OCUPACAO_ADAPTATIVA);
+  const miolo = await sharp(LOGO)
     .resize(interno, interno, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
     .png()
     .toBuffer();
 
+  // Marca o limite da safe zone de 66%: tudo que for essencial precisa estar
+  // dentro deste retangulo, porque as mascaras do Android cortam o resto.
+  const guia = Math.round(lado * SAFE_ZONE);
+  const borda = Math.round((lado - guia) / 2);
+  const marcaSafeZone = Buffer.from(
+    `<svg width="${lado}" height="${lado}">` +
+      `<rect x="${borda}" y="${borda}" width="${guia}" height="${guia}" ` +
+      `fill="none" stroke="#ff0000" stroke-width="3" stroke-dasharray="10 8"/>` +
+      `</svg>`,
+  );
+
   const composto = await sharp({
     create: { width: lado, height: lado, channels: 4, background: COR_MARCA },
   })
-    .composite([{ input: miolo, gravity: 'center' }])
+    .composite([{ input: miolo, gravity: 'center' }, { input: marcaSafeZone }])
     .png()
     .toBuffer();
 
@@ -153,21 +173,22 @@ async function provaSafeZone() {
     .toFile(destino);
   await registrar(destino);
   console.log(`\n  prova da safe zone -> ${path.relative(RAIZ, destino)}`);
-  console.log('    Abra e confirme que o elemento central sobrevive ao corte circular.');
+  console.log('    Mascara circular aplicada; o tracejado vermelho e a safe zone de 66%.');
+  console.log('    Confirme que nada essencial fica fora do tracejado.');
 }
 
 async function webEPwa() {
   console.log('\n=== WEB / PWA ===');
-  // Favicon do WebView e icones PWA/iOS: da simplificada (ESPECIFICATION 3.1.1).
-  await png(LOGO_SIMPLES, path.join(SRC_ASSETS, 'icon', 'favicon.png'), 64);
-  await png(LOGO_SIMPLES, path.join(SRC_ASSETS, 'icon', 'icon-180.png'), 180);
-  await png(LOGO_SIMPLES, path.join(SRC_ASSETS, 'icon', 'icon-512.png'), 512);
+  // Favicon do WebView e icones PWA/iOS (ESPECIFICATION 3.1.1).
+  await png(LOGO, path.join(SRC_ASSETS, 'icon', 'favicon.png'), 64);
+  await png(LOGO, path.join(SRC_ASSETS, 'icon', 'icon-180.png'), 180);
+  await png(LOGO, path.join(SRC_ASSETS, 'icon', 'icon-512.png'), 512);
   console.log('  favicon.png 64  |  icon-180.png  |  icon-512.png  (iOS futuro)');
 
-  // Logo da tela inicial: do logo COMPLETO, exibido grande (BACKLOG 1.5).
+  // Logo da tela inicial, exibido grande.
   const destinoLogo = path.join(SRC_ASSETS, 'images', 'logo.webp');
   await garantirPasta(path.dirname(destinoLogo));
-  await sharp(LOGO_COMPLETO)
+  await sharp(LOGO)
     .resize(512, 512, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
     .webp({ quality: 90, alphaQuality: 100 })
     .toFile(destinoLogo);
@@ -185,7 +206,7 @@ async function splash() {
     const destino = path.join(RES_ANDROID, 'drawable', nome);
     await garantirPasta(path.dirname(destino));
     const lado = Math.round(Math.min(largura, altura) * 0.5);
-    const miolo = await sharp(LOGO_COMPLETO)
+    const miolo = await sharp(LOGO)
       .resize(lado, lado, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
       .png()
       .toBuffer();
@@ -206,7 +227,7 @@ async function iconeDaLoja() {
   await garantirPasta(STORE_ASSETS);
   const destino = path.join(STORE_ASSETS, 'icon-512.png');
 
-  const miolo = await sharp(LOGO_SIMPLES)
+  const miolo = await sharp(LOGO)
     .resize(512, 512, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
     .png()
     .toBuffer();

@@ -133,8 +133,8 @@ async function processarImagens() {
     const base = path.basename(arquivo, '.png');
     const origem = path.join(ORIGEM_IMAGENS, arquivo);
 
-    // Os logos sao tratados por build-icons.mjs (BACKLOG 1.5), nao aqui.
-    if (base === 'logo' || base === 'logo-simplificada') continue;
+    // O logo e tratado por build-icons.mjs, nao aqui.
+    if (base === 'logo') continue;
 
     const ehAnimal = ANIMAIS.includes(base);
     const nomeCorrigido = CORRECOES_DE_GRAFIA.get(base) ?? base;

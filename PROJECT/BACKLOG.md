@@ -328,10 +328,11 @@ Coisas descobertas ao construir as Fases 0–3, que não estavam previstas:
 
 | # | Achado | Situação |
 |---|--------|----------|
-| 1 | **6º background entregue:** `background-anonovo.png` estava em `PROJECT/assets/` sem constar na especificação | ✅ Registrado como tema `anonovo`, janela **25/12–05/01**. O Natal foi encurtado para **01–24/12** para não colidir. É a única janela que atravessa a virada do ano |
-| 2 | **O logo diz "ForestBook"**, com a grafia inglesa correta, enquanto o app se chama "Florest Book" (§ 7) | ⚠️ *Pendência N* — **decisão sua**: qual grafia vale na loja e na tela? |
-| 3 | **`logo-simplificada.png` é idêntico em complexidade ao `logo.png`** — texto + 5 animais. Reduzido a 48 px o nome fica ilegível, que é exatamente o problema que a existência dos dois arquivos deveria evitar (§ 3.1) | ⚠️ *Pendência O* — sugestão: uma versão só com um animal ou o livro, sem texto |
-| 4 | **`background-anonovo.png` é fotorrealista**; os outros cinco são cartoon, como os animais | ⚠️ *Pendência P* — manter ou pedir versão em cartoon? |
+| 1 | **6º background entregue:** `background-anonovo.png` estava em `PROJECT/assets/` sem constar na especificação | ✅ Registrado como tema `anonovo`. Janelas definidas por você: **Natal 01–28/12**, **Ano Novo 29/12–05/01** — a única que atravessa a virada do ano |
+| 2 | O logo dizia "ForestBook", divergindo do nome do app | ✅ **Resolvido** — novo logo sem texto (31/07/2026); era erro de digitação na arte |
+| 3 | `logo-simplificada.png` não era simplificado | ✅ **Resolvido** — arquivo eliminado. O novo logo não tem texto, então uma fonte única atende ícone e tela inicial. Legibilidade a 48 px conferida |
+| 4 | `background-anonovo.png` era fotorrealista | ✅ **Resolvido** — substituído por versão em cartoon |
+| 4b | `flaicon.ico` **está malformado** — nem o `sharp` nem o `System.Drawing` do Windows conseguem abri-lo | ℹ️ Sem impacto: o `.ico` já estava fora do escopo do Android. Se precisar de favicon de site, gero do `logo.png` |
 | 5 | Grafia `backgroung-natal.png` *(pendência L)* | ✅ Resolvido **no pipeline**, sem tocar no original: `build-assets.mjs` mapeia a grafia e grava `background-natal.webp` |
 | 6 | Safe zone de 66% *(pendência J)* | ✅ Validada — `npm run icons` gera a prova com máscara circular em `DEPLOY/store-assets/validacao-safe-zone.png` |
 | 7 | O keystore `florestbook-release.jks` **já existe** na raiz do projeto | ✅ Fora do git (`.gitignore`). Falta só o `keystore.properties` com as senhas, quando for gerar o AAB |

@@ -60,13 +60,13 @@ export const TEMAS: readonly Tema[] = [
   {
     chave: 'natal',
     asset: 'background-natal.webp',
-    // 01-24/12: o Ano Novo assume a partir de 25/12 (janela mais curta).
-    janela: { tipo: 'fixa', inicio: { mes: 12, dia: 1 }, fim: { mes: 12, dia: 24 } },
+    // 01-28/12: o Ano Novo assume a partir de 29/12 (decisao do cliente).
+    janela: { tipo: 'fixa', inicio: { mes: 12, dia: 1 }, fim: { mes: 12, dia: 28 } },
   },
   {
     chave: 'anonovo',
     asset: 'background-anonovo.webp',
-    // Atravessa a virada do ano: 25/12 a 05/01. A comparacao trata esse caso.
-    janela: { tipo: 'fixa', inicio: { mes: 12, dia: 25 }, fim: { mes: 1, dia: 5 } },
+    // Atravessa a virada do ano: 29/12 a 05/01. A comparacao trata esse caso.
+    janela: { tipo: 'fixa', inicio: { mes: 12, dia: 29 }, fim: { mes: 1, dia: 5 } },
   },
 ];

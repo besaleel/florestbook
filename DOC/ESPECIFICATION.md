@@ -90,14 +90,27 @@ Todos os originais ficam em `PROJECT/` e **nunca são sobrescritos**.
 | `background-festejunina.png` | 1024×1536 | RGB | 2.569 KB | Tema Festa Junina |
 | `background-halloween.png` | 1024×1536 | RGB | 2.348 KB | Tema Halloween |
 | `backgroung-natal.png` | 1024×1536 | RGB | 3.174 KB | Tema Natal — ⚠️ ver grafia abaixo |
-| `background-anonovo.png` | 1024×1536 | RGB | 2.755 KB | Tema Ano Novo |
-| `logo.png` | 1024×1024 | RGBA | 1.941 KB | Tela inicial (logo completo) |
-| `logo-simplificada.png` | 1024×1024 | RGBA | 1.879 KB | **Origem dos ícones do app** |
-| `flaicon.ico` | 256×256 | ICO | 170 KB | Build desktop / favicon de site |
+| `background-anonovo.png` | 1024×1535 | RGB | 2.392 KB | Tema Ano Novo (versão cartoon, 31/07/2026) |
+| `logo.png` | 1024×1024 | RGBA | 1.988 KB | **Fonte única de todo logo e ícone** |
+| `flaicon.ico` | 256×256 | ICO | 141 KB | **Não embarcado** — arquivo malformado, ver abaixo |
 | `modelo-sugerido-posicao-animais.png` | 1024×1536 | RGB | — | **Não embarcado** — guia de composição (§ 4.2) |
 
-Ambos os logos têm **canal alpha**, atendendo ao requisito do ícone adaptativo
-do Android.
+O logo tem **canal alpha real** (28% dos pixels transparentes, cantos com
+`alpha = 0`), atendendo ao requisito do ícone adaptativo do Android.
+
+> **Um único arquivo de logo** (decisão de 31/07/2026). A versão anterior era
+> acompanhada de um `logo-simplificada.png`, cuja razão de existir era a
+> legibilidade em tamanho pequeno: um logo com texto vira um borrão a 48 px.
+> **O logo atual não tem texto** — é um quadrado de cantos arredondados com os
+> cinco animais e o livro —, então sobrevive à redução e serve igualmente bem
+> como ícone e como arte da tela inicial. Uma fonte só elimina a chance de as
+> duas divergirem.
+
+> **Sobre `flaicon.ico`:** além de o `.ico` não ser suportado pelo Android,
+> **o arquivo entregue está malformado** — nem o `sharp` nem o `System.Drawing`
+> do Windows conseguem abri-lo. Como já estava fora do escopo do app, isso não
+> bloqueia nada; se um favicon de site institucional for necessário, gere-o a
+> partir do `logo.png`.
 
 #### Os seis backgrounds
 
@@ -116,12 +129,9 @@ todos os temas** — não é preciso calibrar posições por background.
 | Natal | `natal` | **Noturna** — neve, pinheiros decorados, boneco de neve, lua |
 | Ano Novo | `anonovo` | **Noturna** — fogos, balões dourados, luzinhas, cartola e estrelas |
 
-> ⚠️ **O Ano Novo tem estilo visual distinto dos outros cinco.** Enquanto os
-> demais são ilustrações em estilo cartoon, `background-anonovo.png` é
-> fotorrealista. Os animais são cartoon; sobre esse fundo o contraste de estilo
-> fica perceptível. A composição em corredor, porém, é a mesma — o centro está
-> livre e o arranjo de § 4.2 se aplica sem calibração. **A avaliar com o
-> cliente:** manter assim, ou substituir por uma versão em cartoon.
+> ✅ **Ano Novo em cartoon.** A primeira versão entregue era fotorrealista e
+> destoava dos outros cinco; foi **substituída em 31/07/2026** por uma
+> ilustração no mesmo estilo dos demais, coerente com os animais.
 
 > ⚠️ **Grafia do arquivo do Natal.** O arquivo foi entregue como
 > **`backgroung-natal.png`** — "backgrou**ng**", com **G** no lugar do **D**. As
@@ -131,51 +141,51 @@ todos os temas** — não é preciso calibrar posições por background.
 > não aparece (o recuo seguro de § 4.3 o ignoraria sem erro — falha silenciosa,
 > difícil de diagnosticar).
 
-> **Dois temas são cenas noturnas escuras** (Halloween e Natal), enquanto os
-> outros três são diurnos e claros. Isso tem consequência de interface — ver
-> § 4.2, "Legibilidade sobre fundos escuros".
+> **Três temas são cenas noturnas escuras** (Halloween, Natal e Ano Novo),
+> enquanto os outros três são diurnos e claros. Isso tem consequência de
+> interface — ver § 4.2, "Legibilidade sobre fundos escuros".
 
-#### Qual logo usar em cada lugar
+#### O logo em cada lugar
 
-A existência de duas versões é intencional e resolve um problema real: um logo
-com muito detalhe fica ilegível reduzido a 48×48 px na gaveta de aplicativos.
+Todos os contextos usam `logo.png`. Por não conter texto, a mesma arte serve
+tanto exibida grande quanto reduzida a 48×48 px na gaveta de aplicativos.
 
-| Contexto | Arquivo | Motivo |
-|----------|---------|--------|
-| Tela inicial, splash | `logo.png` | Exibido grande, comporta o detalhe |
-| Ícone do app (todas as densidades) | `logo-simplificada.png` | Legível em tamanho pequeno |
-| Ícone adaptativo Android | `logo-simplificada.png` | Safe zone de 66% corta as bordas |
-| Ícone da Play Store (512, sem alpha) | `logo-simplificada.png` | Consistência com o ícone instalado |
-| Favicon do WebView | `logo-simplificada.png` | 64 px |
+| Contexto | Tamanho | Observação |
+|----------|---------|------------|
+| Tela inicial, splash | 512 px | Exibido grande |
+| Ícone do app (todas as densidades) | 48 → 192 px | Verificado a 48 px: animais e livro continuam identificáveis |
+| Ícone adaptativo Android | 432 px | Ocupa 80% do foreground — ver § 3.1.1 |
+| Ícone da Play Store | 512 px | Sem alpha, achatado sobre a cor da marca |
+| Favicon do WebView | 64 px | |
 
-> **Validar antes do build:** confirmar que `logo-simplificada.png` continua
-> legível dentro da **safe zone de 66%** do ícone adaptativo — o Android corta
-> as bordas em máscaras circulares e o elemento central precisa sobreviver ao
-> corte.
-
-Com **cinco temas entregues**, o seletor de background da tela principal fica
+Com **seis temas entregues**, o seletor de background da tela principal fica
 **visível** e a seleção sazonal automática (§ 4.3) está ativa.
-
-> **Sobre `flaicon.ico`:** o formato `.ico` **não é suportado pelo Android** e
-> não será embarcado no app. Fica disponível para build desktop ou favicon de
-> site institucional. Para o WebView, o favicon usado é PNG derivado do
-> `logo-simplificada.png`.
 
 ### 3.1.1 Origem única de logo e ícones
 
-Os dois PNG de logo em `PROJECT/assets/` são a **fonte única** de todo logo e
-ícone do aplicativo. Nada é desenhado à parte: `npm run icons` deriva tudo
-deles, garantindo consistência visual.
+`PROJECT/assets/logo.png` é a **fonte única** de todo logo e ícone do
+aplicativo. Nada é desenhado à parte: `npm run icons` deriva tudo dele,
+garantindo consistência visual por construção.
 
-| Destino | Formato gerado | Fonte | Observação |
-|---------|----------------|-------|------------|
-| Ícone do app Android | PNG mipmap, 5 densidades (48→192) | simplificada | Legado + foreground adaptativo |
-| Ícone adaptativo | `ic_launcher_foreground.png` | simplificada | Safe zone de 66% |
-| Logo da tela inicial | `assets/logo.webp` (512) | `logo.png` | |
-| Favicon do WebView | `assets/icon/favicon.png` (64) | simplificada | |
-| Apple touch icon / PWA | `icon-180.png`, `icon-512.png` | simplificada | Já preparado para o iOS futuro |
-| Splash screen | `drawable/splash.png` + `splash_land.png` | `logo.png` | Logo sobre a cor sólida da marca |
-| Ícone da Play Store | `DEPLOY/store-assets/icon-512.png` | simplificada | **Sem alpha** (exigência do Google) — achatar sobre cor sólida |
+| Destino | Formato gerado | Observação |
+|---------|----------------|------------|
+| Ícone do app Android | PNG mipmap, 5 densidades (48→192) | Legado (`ic_launcher` + `ic_launcher_round`) |
+| Ícone adaptativo | `ic_launcher_foreground.png` | Ocupa **80%** do canvas — ver nota abaixo |
+| Logo da tela inicial | `assets/images/logo.webp` (512) | |
+| Favicon do WebView | `assets/icon/favicon.png` (64) | |
+| Apple touch icon / PWA | `icon-180.png`, `icon-512.png` | Já preparado para o iOS futuro |
+| Splash screen | `drawable/splash.png` + `splash_land.png` | Logo sobre a cor sólida da marca |
+| Ícone da Play Store | `DEPLOY/store-assets/icon-512.png` | **Sem alpha** (exigência do Google) — achatado sobre cor sólida |
+| Prova da safe zone | `DEPLOY/store-assets/validacao-safe-zone.png` | Máscara circular + marcação de 66% |
+
+> **Por que 80% e não 66%.** A safe zone de 66% é o mínimo que precisa
+> sobreviver às máscaras do Android. Como o logo já é um quadrado de cantos
+> arredondados, inscrevê-lo exatamente em 66% produziria uma **moldura dupla**
+> — a do próprio logo mais a do fundo adaptativo. Com 80% a arte preenche a
+> máscara, e o que fica fora da safe zone é apenas a moldura de vegetação, não
+> conteúdo essencial. O `npm run icons` gera a prova visual com o limite de
+> 66% marcado em tracejado vermelho: **nada de essencial pode ficar fora
+> dele**.
 
 ### 3.2 Animais
 
@@ -446,8 +456,8 @@ Registro desta versão:
 | `pascoa` | `background-pascoa.webp` | Páscoa −7/+1 | todos |
 | `festejunina` | `background-festejunina.webp` | 01–30/06 | **PT** |
 | `halloween` | `background-halloween.webp` | 24–31/10 | todos |
-| `natal` | `background-natal.webp` | 01–24/12 | todos |
-| `anonovo` | `background-anonovo.webp` | 25/12–05/01 | todos |
+| `natal` | `background-natal.webp` | 01–28/12 | todos |
+| `anonovo` | `background-anonovo.webp` | 29/12–05/01 | todos |
 
 > As chaves são **sem acento e sem hífen** (`pascoa`, `festejunina`),
 > acompanhando a convenção das chaves de animal (§ 3.2). O nome exibido no
@@ -489,18 +499,17 @@ janelas: `standard`.
 | Páscoa | 7 dias antes até 1 dia depois do domingo de Páscoa | Data móvel — computus | Todos |
 | Festa Junina | 1 a 30 de junho | Fixo | Somente PT |
 | Halloween | 24 a 31 de outubro | Fixo | Todos |
-| Natal | 1 a **24** de dezembro | Fixo | Todos |
-| Ano Novo | **25 de dezembro a 5 de janeiro** | Fixo, atravessa o ano | Todos |
+| Natal | 1 a **28** de dezembro | Fixo | Todos |
+| Ano Novo | **29 de dezembro a 5 de janeiro** | Fixo, atravessa o ano | Todos |
 
 Em caso de sobreposição, vale a janela de **menor duração** (a mais específica).
 Com as janelas acima, nenhuma colide: a Páscoa cai entre março e abril, e as
 demais são intervalos distintos.
 
-> **O Natal foi encurtado para 01–24/12** para dar lugar ao Ano Novo a partir
-> de 25/12. Sem esse recorte as duas janelas colidiriam em toda a última semana
-> de dezembro, e o desempate por menor duração escolheria o Ano Novo de
-> qualquer forma — melhor deixar a intenção explícita no registro do que
-> depender do desempate.
+> **O Natal vai até 28/12 e o Ano Novo começa em 29/12** (decisão do cliente,
+> 31/07/2026). As janelas são adjacentes e não se sobrepõem, o que torna o
+> desempate por menor duração desnecessário entre as duas — a intenção fica
+> explícita no registro em vez de depender de uma regra de precedência.
 
 > **A janela do Ano Novo atravessa a virada do ano** (dezembro → janeiro),
 > sendo a única desse tipo. A comparação de datas trata esse caso
@@ -680,9 +689,6 @@ Registrado para evitar ambiguidade — não faz parte da primeira entrega:
 | H | Revisão nativa da separação silábica nos 6 idiomas | Conteúdo do i18n | § 4.2 |
 | K | Ouvir a música comprimida em aparelho real (origem 30.357 Hz) | Fechamento do áudio | § 3.4 |
 | M | Nomes dos **6** temas traduzidos nos 6 idiomas | Rótulos do seletor | § 4.3 |
-| N | **Logo diz "ForestBook"; o app se chama "Florest Book"** — a arte usa a grafia inglesa correta, a ficha da loja usa a decidida em § 7. Definir qual vale | Identidade visual | § 3.1 |
-| O | **`logo-simplificada.png` não é simplificado** — é o logo completo (texto + 5 animais). A 48 px na gaveta de apps o nome fica ilegível, que é justamente o problema que os dois arquivos deveriam resolver | Legibilidade do ícone | § 3.1 |
-| P | **`background-anonovo.png` é fotorrealista**, enquanto os outros cinco são cartoon. Sobre ele, os animais destoam | Coerência visual | § 3.1 |
 
 ### Resolvidas
 
@@ -697,5 +703,8 @@ Registrado para evitar ambiguidade — não faz parte da primeira entrega:
 | I | Entrega dos backgrounds temáticos | ✅ **Entregues** — Páscoa, Festa Junina, Halloween, Natal e Ano Novo (§ 3.1) |
 | J | Validar `logo-simplificada.png` na safe zone de 66% | ✅ **Validado** — o `npm run icons` gera `DEPLOY/store-assets/validacao-safe-zone.png` com a máscara circular aplicada; o logo sobrevive ao corte. Segue de pé a pendência **O**, sobre legibilidade em tamanho pequeno |
 | L | Renomear `backgroung-natal.png` → `background-natal.png` | ✅ **Tratado no pipeline** — `build-assets.mjs` mapeia a grafia de origem e grava `background-natal.webp`. O arquivo original em `PROJECT/` fica intocado, como manda § 3 |
+| N | Logo dizia "ForestBook", divergindo do nome do app | ✅ **Novo logo entregue em 31/07/2026, sem texto** — o conflito de grafia deixa de existir na arte. O nome de exibição segue "Florest Book" (§ 7) |
+| O | `logo-simplificada.png` não era simplificado | ✅ **Arquivo eliminado** — o novo logo não tem texto e serve aos dois usos. Legibilidade a 48 px verificada por ampliação sem suavização |
+| P | `background-anonovo.png` era fotorrealista | ✅ **Substituído por versão em cartoon**, coerente com os outros cinco temas |
 | — | Definir o eixo dos temas (ambiental ou sazonal) | ✅ Os 4 assets são de festa → **sazonal por data** |
 | — | Música de fundo pesada (1.927 KB) | ✅ **Comprimida para 723 KB** (mono, 96 kbps) |
