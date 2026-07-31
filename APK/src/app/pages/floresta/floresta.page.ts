@@ -13,6 +13,7 @@ import { App } from '@capacitor/app';
 
 import { Animal, ChaveAnimal } from '../../core/models/animal.model';
 import { ChaveTema, TEMAS } from '../../core/models/tema.model';
+import { AdsService } from '../../core/services/ads.service';
 import { AnimalService } from '../../core/services/animal.service';
 import { AudioService } from '../../core/services/audio.service';
 import { BackgroundService } from '../../core/services/background.service';
@@ -33,11 +34,32 @@ const DURACAO_FAIXA_MS = 4500;
 /** Duracao da animacao de reacao ao toque (ESPECIFICATION 2.2). */
 const DURACAO_REACAO_MS = 600;
 
-type Painel = 'idioma' | 'background' | null;
+type Painel = 'idioma' | 'background' | 'nome' | null;
 
 const BANDEIRAS: Record<Idioma, string> = {
   pt: '🇧🇷', en: '🇺🇸', es: '🇪🇸', fr: '🇫🇷', it: '🇮🇹', de: '🇩🇪',
 };
+
+/** Rotulo de cada idioma no seletor, no proprio idioma. */
+const NOMES_IDIOMA: Record<Idioma, string> = {
+  pt: 'Português',
+  en: 'English',
+  es: 'Español',
+  fr: 'Français',
+  it: 'Italiano',
+  de: 'Deutsch',
+};
+
+/**
+ * Documentos legais, exigidos pela Politica para Familias (BACKLOG 7.5).
+ *
+ * Hospedados no GitHub Pages; os HTML de origem ficam em `DEPLOY/`.
+ * PENDENTE: publicar o repositorio e confirmar HTTP 200 nas duas URLs antes de
+ * enviar o app para revisao — a Play Console valida o link (BACKLOG 7.4).
+ */
+const BASE_LEGAL = 'https://besaleel.github.io/florestbook';
+const URL_TERMOS = `${BASE_LEGAL}/termos-de-uso.html`;
+const URL_PRIVACIDADE = `${BASE_LEGAL}/politica-privacidade.html`;
 
 @Component({
   selector: 'app-floresta',
@@ -47,6 +69,7 @@ const BANDEIRAS: Record<Idioma, string> = {
   styleUrl: './floresta.page.scss',
 })
 export class FlorestaPage implements OnInit {
+  protected readonly ads = inject(AdsService);
   private readonly animais = inject(AnimalService);
   private readonly audio = inject(AudioService);
   private readonly hitTest = inject(HitTestService);
@@ -58,6 +81,10 @@ export class FlorestaPage implements OnInit {
   protected readonly lista = this.animais.listar();
   protected readonly idiomas = IDIOMAS;
   protected readonly bandeiras = BANDEIRAS;
+  protected readonly nomesIdioma = NOMES_IDIOMA;
+
+  /** Rascunho do nome enquanto o campo de edicao esta aberto. */
+  protected readonly rascunhoNome = signal('');
 
   /** Animal exibido na faixa; `null` = faixa escondida. */
   protected readonly animalNaFaixa = signal<Animal | null>(null);
@@ -91,6 +118,8 @@ export class FlorestaPage implements OnInit {
     this.audio.precarregar();
     // Mapas de opacidade para o toque por pixel (BACKLOG 4.4).
     void this.hitTest.precarregar(this.lista.map((a) => a.chave));
+    // Banner do rodape. Sem rede, falha em silencio e o espaco recolhe.
+    void this.ads.iniciar();
 
     // Reavalia o tema ao voltar do segundo plano: o app pode ter ficado
     // aberto durante a virada de uma janela sazonal (BACKLOG 4B.10).
@@ -177,6 +206,27 @@ export class FlorestaPage implements OnInit {
 
   protected alternarPainel(qual: Exclude<Painel, null>): void {
     this.painel.update((atual) => (atual === qual ? null : qual));
+  }
+
+  /** Toque no cracha abre a edicao do nome, ja com o valor atual. */
+  protected editarNome(): void {
+    this.rascunhoNome.set(this.settings.nome());
+    this.painel.set('nome');
+  }
+
+  protected async salvarNome(): Promise<void> {
+    await this.settings.definirNome(this.rascunhoNome());
+    this.painel.set(null);
+  }
+
+  /**
+   * Abre um documento legal no navegador do sistema, nunca dentro do app.
+   * A Politica para Familias exige que links externos saiam do contexto
+   * infantil (ESPECIFICATION 6.1, BACKLOG 7.5).
+   */
+  protected async abrirDocumento(qual: 'termos' | 'privacidade'): Promise<void> {
+    const { Browser } = await import('@capacitor/browser');
+    await Browser.open({ url: qual === 'termos' ? URL_TERMOS : URL_PRIVACIDADE });
   }
 
   protected async trocarIdioma(idioma: Idioma): Promise<void> {

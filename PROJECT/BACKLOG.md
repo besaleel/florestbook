@@ -115,14 +115,16 @@ Lista de atividades derivada de [ESPECIFICATION.md](../DOC/ESPECIFICATION.md).
 
 - [x] **4.1** Palco responsivo mantendo a proporção do background; sobras na cor
       sólida do **tema ativo** (1.13), trocando junto com o background
-- [x] **4.2** Posicionar os **5 animais** em percentuais seguindo o modelo
-      `PROJECT/assets/modelo-sugerido-posicao-animais.png` e a tabela de
-      ESPECIFICATION § 4.2. Arranjo em **duas fileiras**: leão (~42%, ~53%) e
-      elefante (~72%, ~55%) ao fundo; lobo (~34%, ~68%), macaco (~68%, ~72%) e
-      sapo (~53%, ~75%) à frente
-- [x] **4.3** Respeitar a **zona útil de 40% a 79%** da altura da tela — acima
-      é céu/copas, abaixo é o rodapé do cenário e o banner. Nenhum animal
-      invade essas faixas (as duas barras pretas do modelo)
+- [x] **4.2** Posicionar os **5 animais** em percentuais seguindo
+      `PROJECT/assets/new-modelo-sugerido-posicao-animais.png` (31/07/2026).
+      Arranjo em **duas fileiras**: leão (26%, 49%, larg. 42%) e elefante
+      (77%, 48%, larg. 48%) ao fundo; lobo (37%, 64%, larg. 40%), macaco
+      (70%, 66%, larg. 36%) e sapo (55%, 74%, larg. 30%) à frente.
+      *O primeiro modelo deixava os animais pequenos demais no aparelho —
+      larguras subiram de 17–32% para 30–48%*
+- [x] **4.3** Respeitar a **zona útil de 25% a 83%** da altura da tela — acima
+      é céu/copas, abaixo é o rodapé do cenário (tronco, cogumelos) e o banner.
+      *Ampliada de 40–79% junto com o novo modelo*
 - [x] **4.4** ⚠️ **Sobreposição visual sim, de toque não.** Resolvido por
       **detecção de pixel opaco** (`HitTestService`), não por recorte manual:
       as caixas se sobrepõem muito (leão×lobo 29%, elefante×macaco 21%,
@@ -234,16 +236,16 @@ Regras completas em ESPECIFICATION § 4.3. Depende de 2.3 (`SettingsService`).
 
 ## Fase 6 — Monetização
 
-- [ ] **6.1** Integrar plugin AdMob no Capacitor
-- [ ] **6.2** ⚠️ **Configurar AdMob para público infantil** —
+- [x] **6.1** Integrar plugin AdMob no Capacitor
+- [x] **6.2** ⚠️ **Configurar AdMob para público infantil** —
       `tagForChildDirectedTreatment`, anúncios **não personalizados** e filtro
       de conteúdo restrito. Exigido pela Política para Famílias
       (ESPECIFICATION § 6.1); sem isso o app é **reprovado na revisão**
-- [ ] **6.3** Banner **Nativo Avançado** no rodapé, 100% da largura
+- [x] **6.3** Banner **Nativo Avançado** no rodapé, 100% da largura
       (IDs de **teste** durante o desenvolvimento)
-- [ ] **6.4** App ID no `AndroidManifest.xml`:
+- [x] **6.4** App ID no `AndroidManifest.xml`:
       `ca-app-pub-3480885465464323~9513221026` (sempre o de produção)
-- [ ] **6.5** Tratar ausência de rede: recolher o banner sem quebrar o layout
+- [x] **6.5** Tratar ausência de rede: recolher o banner sem quebrar o layout
 - [ ] **6.6** Integrar Google Play Billing
 - [ ] **6.7** Fluxo de compra do produto `remove_ads` (não-consumível)
 - [ ] **6.8** Exibir preço **vindo do Google Play** (nunca fixo no código);
@@ -253,7 +255,7 @@ Regras completas em ESPECIFICATION § 4.3. Depende de 2.3 (`SettingsService`).
       aparelho)
 - [ ] **6.11** Barreira parental antes da tela de pagamento
 - [ ] **6.12** Falha ou cancelamento da compra retorna ao jogo sem bloqueio
-- [ ] ⚠️ **6.13** **TROCAR PARA OS IDs DE PRODUÇÃO ANTES DA PUBLICAÇÃO ABERTA**
+- [x] ⚠️ **6.13** **TROCAR PARA OS IDs DE PRODUÇÃO ANTES DA PUBLICAÇÃO ABERTA**
 
       *Bloqueia a monetização: enquanto isso o app exibe "This is a test ad"
       e **não gera nenhuma receita**.*
@@ -280,15 +282,15 @@ Regras completas em ESPECIFICATION § 4.3. Depende de 2.3 (`SettingsService`).
 
 ## Fase 7 — Publicação
 
-- [ ] **7.1** Termo de Uso em HTML → `DEPLOY/termos-de-uso.html`
-- [ ] **7.2** Política de Privacidade em HTML → `DEPLOY/politica-privacidade.html`
+- [x] **7.1** Termo de Uso em HTML → `DEPLOY/termos-de-uso.html`
+- [x] **7.2** Política de Privacidade em HTML → `DEPLOY/politica-privacidade.html`
       (deve declarar: nome fica só no aparelho; uso do AdMob)
-- [ ] **7.3** Nos dois documentos, declarar explicitamente o **Compromisso com
+- [x] **7.3** Nos dois documentos, declarar explicitamente o **Compromisso com
       a Política para Famílias do Google Play** e a ausência de coleta de dados
       de crianças (ESPECIFICATION § 6.1)
 - [ ] **7.4** Publicar os documentos em URL pública e verificar (HTTP 200,
       conteúdo idêntico ao gerado em `DEPLOY/`)
-- [ ] **7.5** Links para os dois documentos na **tela inicial**, abrindo no
+- [x] **7.5** Links para os dois documentos na **tela inicial**, abrindo no
       navegador do sistema via Capacitor Browser — exigência da Política para
       Famílias para links externos
 - [ ] **7.6** ⚠️ **Criar o keystore `florestbook-release.jks`** (alias
@@ -334,6 +336,24 @@ Regras completas em ESPECIFICATION § 4.3. Depende de 2.3 (`SettingsService`).
       temas apenas somando uma entrada ao registro
 
 ---
+
+## Teste em aparelho real — correções (31/07/2026)
+
+Pontos levantados por você no primeiro teste em aparelho, e o que foi feito:
+
+| # | Relato | Correção |
+|---|--------|----------|
+| 1 | **Splash com ícone genérico e tela branca** | Duas causas somadas: (a) o `cap sync` recria `res/` com as pastas `drawable-port-*`/`drawable-land-*` **vazias**, e o pipeline só gravava em `drawable/` — o Android escolhe pela densidade e não achava nada; (b) a partir da **API 31** o `Theme.SplashScreen` ignora `android:background` e exige `windowSplashScreenBackground` + `windowSplashScreenAnimatedIcon`, que não estavam declarados. Agora `npm run icons` gera as 10 densidades e o tema declara os dois conjuntos. Também passou a gerar `colors.xml`, que **não existia** apesar de o `styles.xml` referenciá-lo |
+| 2 | **Animais pequenos** | Reposicionados conforme `new-modelo-sugerido-posicao-animais.png`, medido sobre grade de percentuais. Larguras de 17–32% → **30–48%**; zona útil de 40–79% → **25–83%** |
+| 3 | **Opções de idioma cortadas** | A grade de bandeiras virou **lista vertical rolável** com bandeira + nome do idioma no próprio idioma + tique no ativo. O seletor de temas usa a mesma estrutura. Verificado: os 6 cabem sem corte |
+| 4 | **Som de fundo baixo** | Volume de `0.35` → **`0.75`**; o ducking subiu de `0.08` → `0.18` para a trilha não sumir enquanto o animal fala |
+| 5 | **Nome não editável** | O crachá virou botão: toque abre campo de edição já preenchido. Sem nome salvo, ele convida a preencher em vez de sumir |
+| 6 | **Faltam termos de uso e privacidade** | Documentos criados em `DEPLOY/` e links no rodapé da tela principal, abrindo no **navegador do sistema** via Capacitor Browser — a Política para Famílias exige que links externos saiam do contexto infantil |
+| 7 | **AdMob liberado com key de produção** | Integrado com a configuração infantil **obrigatória** (não personalizados + `initializeForTesting`). A escolha do bloco é automática: **debug → teste, release → produção**, resolvida em tempo de build por `ngDevMode`. Assim seu teste em aparelho é seguro e o AAB publicado já sai monetizando |
+
+> **Play Billing** fica para depois da primeira publicação, como você indicou —
+> o produto `remove_ads` precisa existir na Play Console antes de a integração
+> poder ser testada. Os itens 6.6–6.12 seguem pendentes por essa dependência.
 
 ## Achados desta entrega (31/07/2026)
 

@@ -10,14 +10,18 @@
       <!-- Barra superior (BACKLOG 4.6). Os fundos semitransparentes garantem
            contraste tanto nos temas diurnos quanto nas cenas noturnas. -->
       <header class="barra">
-        @if (settings.nome(); as nome) {
-          <div class="cracha">
-            <span class="avatar" aria-hidden="true">🧒</span>
-            <span class="nome">{{ nome }}</span>
-          </div>
-        } @else {
-          <span></span>
-        }
+        <!-- Tocar no cracha abre a edicao do nome. Sem nome salvo, ele
+             convida a preencher em vez de sumir. -->
+        <button
+          type="button"
+          class="cracha"
+          (click)="editarNome()"
+          [attr.aria-label]="'inicio.campoNome' | translate"
+        >
+          <span class="avatar" aria-hidden="true">🧒</span>
+          <span class="nome">{{ settings.nome() || ('inicio.campoNome' | translate) }}</span>
+          <span class="lapis" aria-hidden="true">✏️</span>
+        </button>
 
         <nav class="acoes">
           <button
@@ -53,35 +57,67 @@
         </nav>
       </header>
 
+      <!-- Lista vertical rolavel: a grade de bandeiras cortava itens em telas
+           menores, e so a bandeira nao identifica o idioma para o adulto. -->
       @if (painel() === 'idioma') {
-        <div class="painel painel-idioma">
+        <div class="painel painel-lista" role="listbox">
           @for (idioma of idiomas; track idioma) {
             <button
               type="button"
-              class="opcao-idioma"
+              class="opcao-lista"
+              role="option"
+              [attr.aria-selected]="settings.idioma() === idioma"
               [class.ativo]="settings.idioma() === idioma"
               (click)="trocarIdioma(idioma)"
             >
-              {{ bandeiras[idioma] }}
+              <span class="marca">{{ bandeiras[idioma] }}</span>
+              <span class="rotulo">{{ nomesIdioma[idioma] }}</span>
+              @if (settings.idioma() === idioma) {
+                <span class="tique" aria-hidden="true">✓</span>
+              }
             </button>
           }
+        </div>
+      }
+
+      <!-- Edicao do nome da crianca -->
+      @if (painel() === 'nome') {
+        <div class="painel painel-nome">
+          <input
+            class="campo-nome"
+            type="text"
+            [value]="rascunhoNome()"
+            (input)="rascunhoNome.set($any($event.target).value)"
+            (keyup.enter)="salvarNome()"
+            [placeholder]="'inicio.campoNome' | translate"
+            maxlength="20"
+            autocomplete="off"
+            autofocus
+          />
+          <button type="button" class="botao-salvar" (click)="salvarNome()">
+            {{ 'barreiraParental.confirmar' | translate }}
+          </button>
         </div>
       }
 
       @if (painel() === 'background') {
         <!-- Os 6 temas ficam disponiveis em qualquer idioma e qualquer epoca
              do ano: a sazonalidade so define o padrao (BACKLOG 4B.5). -->
-        <div class="painel painel-tema">
+        <div class="painel painel-lista" role="listbox">
           @for (tema of temas(); track tema.chave) {
             <button
               type="button"
-              class="opcao-tema"
+              class="opcao-lista"
+              role="option"
+              [attr.aria-selected]="fundo.tema() === tema.chave"
               [class.ativo]="fundo.tema() === tema.chave"
               (click)="trocarTema(tema.chave)"
-              [attr.aria-label]="rotuloTema(tema.chave) | translate"
             >
-              <img [src]="assetDoTema(tema.chave)" alt="" />
-              <span>{{ rotuloTema(tema.chave) | translate }}</span>
+              <img class="miniatura" [src]="assetDoTema(tema.chave)" alt="" />
+              <span class="rotulo">{{ rotuloTema(tema.chave) | translate }}</span>
+              @if (fundo.tema() === tema.chave) {
+                <span class="tique" aria-hidden="true">✓</span>
+              }
             </button>
           }
         </div>
@@ -122,14 +158,31 @@
     <footer class="rodape">
       <app-faixa-nome [animal]="animalNaFaixa()" />
 
-      @if (!settings.semAnuncios()) {
-        <button type="button" class="remover-anuncio">
-          {{ 'anuncios.remover' | translate }}
-        </button>
+      <div class="acoes-rodape">
+        @if (!settings.semAnuncios()) {
+          <button type="button" class="remover-anuncio">
+            {{ 'anuncios.remover' | translate }}
+          </button>
+        }
 
-        <!-- Area reservada do banner. Sem rede ela recolhe sozinha, sem
-             quebrar o layout (BACKLOG 4.9, 6.5). -->
-        <div class="banner" aria-hidden="true"></div>
+        <!-- Links legais exigidos pela Politica para Familias: abrem no
+             navegador do sistema, fora do app (BACKLOG 7.5). -->
+        <nav class="legais">
+          <button type="button" (click)="abrirDocumento('termos')">
+            {{ 'legal.termos' | translate }}
+          </button>
+          <span aria-hidden="true">·</span>
+          <button type="button" (click)="abrirDocumento('privacidade')">
+            {{ 'legal.privacidade' | translate }}
+          </button>
+        </nav>
+      </div>
+
+      @if (!settings.semAnuncios()) {
+        <!-- Espaco reservado para o banner NATIVO, que o AdMob desenha por
+             cima do WebView. Sem rede a altura fica 0 e o layout recolhe
+             sozinho, sem buraco (BACKLOG 4.9, 6.5). -->
+        <div class="banner" aria-hidden="true" [style.height.px]="ads.alturaBanner()"></div>
       }
     </footer>
   </div>

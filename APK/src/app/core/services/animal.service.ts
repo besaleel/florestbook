@@ -4,27 +4,30 @@ import { Animal, ChaveAnimal } from '../models/animal.model';
 /**
  * Catalogo dos 5 animais (ESPECIFICATION 4.2, BACKLOG 2.1).
  *
- * Posicoes medidas sobre `PROJECT/assets/modelo-sugerido-posicao-animais.png`,
- * em percentuais do palco. A ZONA UTIL vai de 40% a 79% da altura: acima e
- * ceu/copas, abaixo e o rodape do cenario e o banner. Nenhum animal invade
- * essas faixas — sao as duas barras pretas do modelo.
+ * Posicoes medidas sobre
+ * `PROJECT/assets/new-modelo-sugerido-posicao-animais.png` (31/07/2026), em
+ * percentuais do palco. O modelo anterior deixava os animais PEQUENOS demais
+ * no aparelho; o novo os aproxima, ocupando a clareira inteira.
+ *
+ * A ZONA UTIL passou de 40-79% para 25-83% da altura: os animais sobem ate as
+ * copas e descem ate onde comeca o rodape do cenario.
  *
  * O arranjo e em DUAS FILEIRAS com sobreposicao visual. A sobreposicao e
- * apenas visual: a area de toque de cada animal e exclusiva, e o da frente
- * vence a disputa (ESPECIFICATION 4.2).
+ * apenas visual: o toque e resolvido por pixel opaco (HitTestService), entao
+ * cada animal responde so onde esta desenhado (ESPECIFICATION 4.2).
  */
 
 /** Limites da zona util, em % da altura do palco. */
-export const ZONA_UTIL = { topo: 40, base: 79 } as const;
+export const ZONA_UTIL = { topo: 25, base: 83 } as const;
 
 @Injectable({ providedIn: 'root' })
 export class AnimalService {
   private readonly catalogo: readonly Animal[] = [
     {
       chave: 'leao',
-      x: 42,
-      y: 53,
-      largura: 26,
+      x: 26,
+      y: 49,
+      largura: 42,
       fileira: 'fundo',
       rosto: '50% 22%',
       // Respiracao media; balanco de cabeca um pouco maior.
@@ -32,9 +35,9 @@ export class AnimalService {
     },
     {
       chave: 'elefante',
-      x: 72,
-      y: 55,
-      largura: 32, // Maior de todos: ancora a cena.
+      x: 77,
+      y: 48,
+      largura: 48, // Maior de todos: ancora a cena.
       fileira: 'fundo',
       rosto: '50% 24%',
       // Respiracao lenta e ampla; balanco minimo (animal pesado).
@@ -42,9 +45,9 @@ export class AnimalService {
     },
     {
       chave: 'lobo',
-      x: 34,
-      y: 68,
-      largura: 26,
+      x: 37,
+      y: 64,
+      largura: 40,
       fileira: 'frente',
       rosto: '52% 20%',
       // Respiracao media-rapida, alerta.
@@ -52,9 +55,9 @@ export class AnimalService {
     },
     {
       chave: 'macaco',
-      x: 68,
-      y: 72,
-      largura: 22,
+      x: 70,
+      y: 66,
+      largura: 36,
       fileira: 'frente',
       rosto: '50% 18%',
       // O mais agitado: ciclo curto, rotacao maior.
@@ -62,11 +65,11 @@ export class AnimalService {
     },
     {
       chave: 'sapo',
-      x: 53,
-      y: 75,
+      x: 55,
+      y: 74,
       // Menor de todos e no centro: e o caso critico do alvo de 48 dp
       // (BACKLOG 4.5). O minimo em px e garantido no CSS, nao aqui.
-      largura: 17,
+      largura: 30,
       fileira: 'frente',
       rosto: '50% 26%',
       // Pulsacao em ciclos curtos com pausa entre elas (inflar/desinflar).

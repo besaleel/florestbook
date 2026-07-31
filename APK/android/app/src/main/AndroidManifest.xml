@@ -25,6 +25,19 @@
 
         </activity>
 
+        <!-- AdMob App ID — SEMPRE o de producao; so o bloco de anuncios
+             alterna entre teste e producao (ESPECIFICATION 7, BACKLOG 6.4). -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3480885465464323~9513221026" />
+
+        <!-- Politica para Familias: o app e dirigido a criancas, entao o SDK
+             nao pode usar identificadores de publicidade para personalizacao
+             (ESPECIFICATION 6.1). -->
+        <meta-data
+            android:name="com.google.android.gms.ads.flag.OPTIMIZE_INITIALIZATION"
+            android:value="true" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"

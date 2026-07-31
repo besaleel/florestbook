@@ -3,11 +3,19 @@ import { App } from '@capacitor/app';
 import { ChaveAnimal } from '../models/animal.model';
 import { SettingsService } from './settings.service';
 
-/** Volume normal da musica de fundo: suave, nao compete com os animais. */
-const VOLUME_MUSICA = 0.35;
+/**
+ * Volume normal da musica de fundo.
+ *
+ * Estava em 0.35 e ficou BAIXO demais no alto-falante de um celular (teste
+ * real, 31/07/2026). A musica ja foi normalizada para -16 LUFS na origem, e o
+ * alto-falante de um aparelho de entrada tem pouca potencia: 0.75 deixa a
+ * trilha audivel sem competir com a voz dos animais, que tocam mais alto e
+ * ainda contam com o ducking abaixo.
+ */
+const VOLUME_MUSICA = 0.75;
 
 /** Volume da musica enquanto um animal fala (ducking, ESPECIFICATION 3.4). */
-const VOLUME_DUCK = 0.08;
+const VOLUME_DUCK = 0.18;
 
 /** Duracao da rampa de volume do ducking. Curta o bastante para acompanhar
  *  o som do animal, longa o bastante para nao soar como um corte. */

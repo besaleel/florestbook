@@ -47,18 +47,24 @@
 }
 
 .cracha {
+  // Botao: tocar nele abre a edicao do nome.
+  pointer-events: auto;
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  max-width: 42vw;
+  max-width: 46vw;
+  min-height: 48px;
   padding: 0.35rem 0.8rem;
+  border: 2px solid rgb(255 255 255 / 35%);
   border-radius: 999px;
   // Fundo proprio em vez de depender da cor do cenario: precisa funcionar
   // tanto nos temas diurnos quanto nas cenas noturnas (BACKLOG 4.7).
   background: rgb(0 0 0 / 42%);
   color: #fff;
+  -webkit-tap-highlight-color: transparent;
 
   .avatar {
+    flex: 0 0 auto;
     font-size: 1.2rem;
     line-height: 1;
   }
@@ -70,6 +76,12 @@
     text-overflow: ellipsis;
     text-shadow: 0 1px 3px rgb(0 0 0 / 70%);
     white-space: nowrap;
+  }
+
+  .lapis {
+    flex: 0 0 auto;
+    font-size: 0.75rem;
+    opacity: 0.85;
   }
 }
 
@@ -115,45 +127,33 @@
   box-shadow: 0 8px 24px rgb(0 0 0 / 45%);
 }
 
-.painel-idioma {
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  max-width: 62vw;
-  justify-content: center;
-}
-
-.opcao-idioma {
-  width: 48px;
-  height: 48px;
-  border: 3px solid transparent;
-  border-radius: 50%;
-  background: rgb(255 255 255 / 18%);
-  font-size: 1.5rem;
-  line-height: 1;
-
-  &.ativo {
-    border-color: #ffd54a;
-    background: rgb(255 255 255 / 34%);
-  }
-}
-
-.painel-tema {
+/**
+ * Lista vertical usada pelos seletores de idioma e de tema.
+ *
+ * A versao anterior era uma grade de bandeiras que CORTAVA itens em telas
+ * menores. Lista rolavel com rotulo textual resolve os dois problemas: nada
+ * fica escondido e o adulto identifica a opcao sem depender da bandeira.
+ */
+.painel-lista {
   flex-direction: column;
-  gap: 0.5rem;
-  width: 56vw;
-  max-width: 260px;
-  // Com 6 temas a lista pode passar da altura util em telas baixas.
-  max-height: 56vh;
+  gap: 0.4rem;
+  width: 62vw;
+  max-width: 280px;
+  // Rola em vez de estourar: com 6 itens, telas baixas nao comportam a lista.
+  max-height: 60vh;
   overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
-.opcao-tema {
+.opcao-lista {
   display: flex;
   align-items: center;
   gap: 0.7rem;
-  min-height: 48px;
-  padding: 0.35rem 0.6rem;
-  border: 3px solid transparent;
+  width: 100%;
+  // Alvo confortavel mesmo para o dedo de um adulto apressado.
+  min-height: 52px;
+  padding: 0.4rem 0.7rem;
+  border: 2px solid transparent;
   border-radius: 0.7rem;
   background: rgb(255 255 255 / 12%);
   color: #fff;
@@ -161,18 +161,68 @@
   font-weight: 700;
   text-align: left;
 
-  img {
+  .marca {
+    flex: 0 0 auto;
+    font-size: 1.35rem;
+    line-height: 1;
+  }
+
+  .miniatura {
     flex: 0 0 auto;
     width: 44px;
-    height: 34px;
+    height: 32px;
     border-radius: 0.35rem;
     object-fit: cover;
+  }
+
+  .rotulo {
+    flex: 1 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .tique {
+    flex: 0 0 auto;
+    color: #ffd54a;
+    font-size: 1.1rem;
   }
 
   &.ativo {
     border-color: #ffd54a;
     background: rgb(255 255 255 / 26%);
   }
+}
+
+// --- Edicao do nome da crianca ---
+
+.painel-nome {
+  flex-direction: column;
+  gap: 0.6rem;
+  width: 70vw;
+  max-width: 300px;
+}
+
+.campo-nome {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 0.9rem;
+  border: 2px solid #ffd54a;
+  border-radius: 0.7rem;
+  background: #fff;
+  color: #1c1c1c;
+  font-size: 1.05rem;
+  text-align: center;
+}
+
+.botao-salvar {
+  min-height: 48px;
+  border: none;
+  border-radius: 0.7rem;
+  background: linear-gradient(180deg, #ffd54a, #f5a623);
+  color: #4a2c00;
+  font-size: 1rem;
+  font-weight: 800;
 }
 
 // --- Animais ---
@@ -292,9 +342,18 @@
   padding-bottom: env(safe-area-inset-bottom);
 }
 
+.acoes-rodape {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.6vh 0;
+  // Faixa escura propria: o rodape fica sobre a cor do tema, que varia do
+  // verde claro ao azul-noite. Sem isso os links sumiriam em alguns temas.
+  background: rgb(0 0 0 / 28%);
+}
+
 .remover-anuncio {
-  align-self: center;
-  margin: 0.5vh 0;
   padding: 0.4rem 1.1rem;
   border: 2px solid rgb(255 255 255 / 55%);
   border-radius: 999px;
@@ -302,6 +361,26 @@
   color: #fff;
   font-size: clamp(0.75rem, 3.2vw, 0.9rem);
   font-weight: 700;
+}
+
+// Links legais: discretos o bastante para nao competir com o jogo, mas
+// sempre visiveis — a Politica para Familias exige acesso facil.
+.legais {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: rgb(255 255 255 / 75%);
+  font-size: clamp(0.65rem, 2.8vw, 0.78rem);
+
+  button {
+    padding: 0.2rem 0.15rem;
+    border: none;
+    background: none;
+    color: inherit;
+    font-size: inherit;
+    text-decoration: underline;
+    text-shadow: 0 1px 3px rgb(0 0 0 / 80%);
+  }
 }
 
 .banner {

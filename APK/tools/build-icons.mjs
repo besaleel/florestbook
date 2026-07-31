@@ -102,7 +102,8 @@ async function iconesAndroid() {
     console.log(`  mipmap-${densidade.padEnd(8)} ${lado}px  (+ foreground adaptativo)`);
   }
 
-  // Cor de fundo do icone adaptativo, referenciada pelo XML abaixo.
+  // Cores do tema Android. O `cap sync` NAO cria colors.xml, mas styles.xml
+  // referencia estes nomes — sem o arquivo, o build falha ou cai no padrao.
   const valores = path.join(RES_ANDROID, 'values');
   await garantirPasta(valores);
   const hex = `#${[COR_MARCA.r, COR_MARCA.g, COR_MARCA.b].map((v) => v.toString(16).padStart(2, '0')).join('')}`;
@@ -112,6 +113,21 @@ async function iconesAndroid() {
     'utf8',
   );
   await registrar(path.join(valores, 'ic_launcher_background.xml'));
+
+  // Fonte unica da cor da marca: gerada aqui para nunca divergir do splash e
+  // do icone adaptativo.
+  await writeFile(
+    path.join(valores, 'colors.xml'),
+    '<?xml version="1.0" encoding="utf-8"?>\n' +
+      '<resources>\n' +
+      `    <color name="brandColor">${hex}</color>\n` +
+      `    <color name="colorPrimary">${hex}</color>\n` +
+      `    <color name="colorPrimaryDark">#17512c</color>\n` +
+      '    <color name="colorAccent">#ffd54a</color>\n' +
+      '</resources>\n',
+    'utf8',
+  );
+  await registrar(path.join(valores, 'colors.xml'));
 
   const xmlAdaptativo =
     '<?xml version="1.0" encoding="utf-8"?>\n' +
@@ -196,27 +212,59 @@ async function webEPwa() {
   console.log('  logo.webp 512  (de logo.png — tela inicial)');
 }
 
+/**
+ * Splash em TODAS as densidades que o Capacitor cria (BACKLOG 0.5).
+ *
+ * O `cap sync` recria `res/` com as pastas `drawable-port-*` e `drawable-land-*`
+ * VAZIAS. Gravar so em `drawable/` nao basta: o Android escolhe a pasta pela
+ * densidade do aparelho e, nao achando nada, o tema cai no fundo padrao — foi
+ * exatamente isso que produziu a tela branca com icone generico no teste real.
+ */
+const SPLASH_RETRATO = [
+  ['mdpi', 320, 480],
+  ['hdpi', 480, 800],
+  ['xhdpi', 720, 1280],
+  ['xxhdpi', 960, 1600],
+  ['xxxhdpi', 1280, 1920],
+];
+
+async function umSplash(destino, largura, altura) {
+  await garantirPasta(path.dirname(destino));
+  // Logo a 45% do menor lado: sobra respiro nas telas mais estreitas.
+  const lado = Math.round(Math.min(largura, altura) * 0.45);
+  const miolo = await sharp(LOGO)
+    .resize(lado, lado, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+    .png()
+    .toBuffer();
+
+  await sharp({ create: { width: largura, height: altura, channels: 4, background: COR_MARCA } })
+    .composite([{ input: miolo, gravity: 'center' }])
+    .png()
+    .toFile(destino);
+  await registrar(destino);
+}
+
 async function splash() {
   console.log('\n=== SPLASH (de logo.png) ===');
-  // Logo sobre a cor solida da marca, retrato e paisagem.
-  for (const [nome, largura, altura] of [
-    ['splash.png', 1080, 1920],
-    ['splash_land.png', 1920, 1080],
-  ]) {
-    const destino = path.join(RES_ANDROID, 'drawable', nome);
-    await garantirPasta(path.dirname(destino));
-    const lado = Math.round(Math.min(largura, altura) * 0.5);
-    const miolo = await sharp(LOGO)
-      .resize(lado, lado, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
-      .png()
-      .toBuffer();
 
-    await sharp({ create: { width: largura, height: altura, channels: 4, background: COR_MARCA } })
-      .composite([{ input: miolo, gravity: 'center' }])
-      .png()
-      .toFile(destino);
-    await registrar(destino);
-    console.log(`  ${nome}  ${largura}x${altura}`);
+  // Recuo generico, usado quando nenhuma densidade casa.
+  await umSplash(path.join(RES_ANDROID, 'drawable', 'splash.png'), 1080, 1920);
+  console.log('  drawable/splash.png  1080x1920  (recuo)');
+
+  for (const [densidade, largura, altura] of SPLASH_RETRATO) {
+    await umSplash(
+      path.join(RES_ANDROID, `drawable-port-${densidade}`, 'splash.png'),
+      largura,
+      altura,
+    );
+    // O app e retrato (ESPECIFICATION 5), mas o Android ainda pode consultar a
+    // pasta land durante a rotacao inicial; sem o arquivo, tela branca.
+    await umSplash(
+      path.join(RES_ANDROID, `drawable-land-${densidade}`, 'splash.png'),
+      altura,
+      largura,
+    );
+    console.log(`  drawable-port/land-${densidade.padEnd(7)} ${largura}x${altura}`);
   }
 }
 
