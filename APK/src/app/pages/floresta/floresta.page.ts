@@ -14,6 +14,7 @@ import { App } from '@capacitor/app';
 import { Animal, ChaveAnimal } from '../../core/models/animal.model';
 import { ChaveTema, TEMAS } from '../../core/models/tema.model';
 import { AdsService } from '../../core/services/ads.service';
+import { BillingService } from '../../core/services/billing.service';
 import { AnimalService } from '../../core/services/animal.service';
 import { AudioService } from '../../core/services/audio.service';
 import { BackgroundService } from '../../core/services/background.service';
@@ -21,6 +22,7 @@ import { HitTestService } from '../../core/services/hit-test.service';
 import { Idioma, IDIOMAS, SettingsService } from '../../core/services/settings.service';
 import { I18nService } from '../../core/services/i18n.service';
 import { FaixaNomeComponent } from '../../components/faixa-nome/faixa-nome.component';
+import { abrirDocumentoLegal } from '../../core/legal';
 
 /**
  * Duracao da faixa do nome: 4,5 s para TODOS os animais (ESPECIFICATION 3.4).
@@ -34,7 +36,10 @@ const DURACAO_FAIXA_MS = 4500;
 /** Duracao da animacao de reacao ao toque (ESPECIFICATION 2.2). */
 const DURACAO_REACAO_MS = 600;
 
-type Painel = 'idioma' | 'background' | 'nome' | null;
+type Painel = 'idioma' | 'background' | 'nome' | 'compra' | null;
+
+/** Etapas do fluxo de compra: barreira parental primeiro (BACKLOG 6.11). */
+type EtapaCompra = 'barreira' | 'loja';
 
 const BANDEIRAS: Record<Idioma, string> = {
   pt: '🇧🇷', en: '🇺🇸', es: '🇪🇸', fr: '🇫🇷', it: '🇮🇹', de: '🇩🇪',
@@ -50,17 +55,6 @@ const NOMES_IDIOMA: Record<Idioma, string> = {
   de: 'Deutsch',
 };
 
-/**
- * Documentos legais, exigidos pela Politica para Familias (BACKLOG 7.5).
- *
- * Hospedados no GitHub Pages; os HTML de origem ficam em `DEPLOY/`.
- * PENDENTE: publicar o repositorio e confirmar HTTP 200 nas duas URLs antes de
- * enviar o app para revisao — a Play Console valida o link (BACKLOG 7.4).
- */
-const BASE_LEGAL = 'https://besaleel.github.io/florestbook';
-const URL_TERMOS = `${BASE_LEGAL}/termos-de-uso.html`;
-const URL_PRIVACIDADE = `${BASE_LEGAL}/politica-privacidade.html`;
-
 @Component({
   selector: 'app-floresta',
   standalone: true,
@@ -70,6 +64,7 @@ const URL_PRIVACIDADE = `${BASE_LEGAL}/politica-privacidade.html`;
 })
 export class FlorestaPage implements OnInit {
   protected readonly ads = inject(AdsService);
+  protected readonly billing = inject(BillingService);
   private readonly animais = inject(AnimalService);
   private readonly audio = inject(AudioService);
   private readonly hitTest = inject(HitTestService);
@@ -93,6 +88,14 @@ export class FlorestaPage implements OnInit {
   protected readonly reagindo = signal<ChaveAnimal | null>(null);
 
   protected readonly painel = signal<Painel>(null);
+
+  // --- Fluxo de compra (BACKLOG 6.7-6.12) ---
+  protected readonly etapaCompra = signal<EtapaCompra>('barreira');
+  protected readonly barreiraA = signal(0);
+  protected readonly barreiraB = signal(0);
+  protected readonly respostaBarreira = signal('');
+  protected readonly erroBarreira = signal(false);
+  protected readonly avisoCompra = signal<'nadaARestaurar' | null>(null);
 
   /** Temas do seletor: todos os que existem, em qualquer idioma e epoca. */
   protected readonly temas = this.fundo.temasDoSeletor;
@@ -120,6 +123,8 @@ export class FlorestaPage implements OnInit {
     void this.hitTest.precarregar(this.lista.map((a) => a.chave));
     // Banner do rodape. Sem rede, falha em silencio e o espaco recolhe.
     void this.ads.iniciar();
+    // Billing: recupera compra ja feita e busca o preco (BACKLOG 6.8, 6.10).
+    void this.billing.iniciar();
 
     // Reavalia o tema ao voltar do segundo plano: o app pode ter ficado
     // aberto durante a virada de uma janela sazonal (BACKLOG 4B.10).
@@ -225,8 +230,7 @@ export class FlorestaPage implements OnInit {
    * infantil (ESPECIFICATION 6.1, BACKLOG 7.5).
    */
   protected async abrirDocumento(qual: 'termos' | 'privacidade'): Promise<void> {
-    const { Browser } = await import('@capacitor/browser');
-    await Browser.open({ url: qual === 'termos' ? URL_TERMOS : URL_PRIVACIDADE });
+    await abrirDocumentoLegal(qual);
   }
 
   protected async trocarIdioma(idioma: Idioma): Promise<void> {
@@ -245,6 +249,53 @@ export class FlorestaPage implements OnInit {
     await this.settings.definirSom(ligado);
     // Ligar o som e um gesto do usuario: aproveita para liberar o autoplay.
     if (ligado) await this.audio.liberarComGesto();
+  }
+
+  /**
+   * Abre o fluxo de compra SEMPRE pela barreira parental (BACKLOG 6.11):
+   * uma multiplicacao que a crianca de 2-6 anos nao resolve. Fatores de 6 a 9
+   * para nao sair trivial (6x7 em vez de 2x2).
+   */
+  protected abrirCompra(): void {
+    this.barreiraA.set(6 + Math.floor(Math.random() * 4));
+    this.barreiraB.set(6 + Math.floor(Math.random() * 4));
+    this.respostaBarreira.set('');
+    this.erroBarreira.set(false);
+    this.avisoCompra.set(null);
+    this.etapaCompra.set('barreira');
+    this.painel.set('compra');
+  }
+
+  protected confirmarBarreira(): void {
+    const certo = Number(this.respostaBarreira()) === this.barreiraA() * this.barreiraB();
+    if (!certo) {
+      this.erroBarreira.set(true);
+      this.respostaBarreira.set('');
+      return;
+    }
+    this.etapaCompra.set('loja');
+  }
+
+  /**
+   * Compra via Google Play (BACKLOG 6.7). Sucesso fecha o painel e o banner
+   * some sozinho (o rodape observa `semAnuncios`). Falha ou cancelamento
+   * apenas devolve ao jogo, sem bloqueio (BACKLOG 6.12).
+   */
+  protected async comprarRemocao(): Promise<void> {
+    await this.billing.comprar();
+    // Sucesso ou nao, o jogo volta ao normal: com a compra o banner some
+    // sozinho (o rodape observa `semAnuncios`); sem ela nada muda.
+    this.painel.set(null);
+  }
+
+  /** Restauracao manual para reinstalacao ou troca de aparelho (6.10). */
+  protected async restaurarCompra(): Promise<void> {
+    const restaurado = await this.billing.restaurar();
+    if (restaurado) {
+      this.painel.set(null);
+      return;
+    }
+    this.avisoCompra.set('nadaARestaurar');
   }
 
   protected rotuloTema(chave: ChaveTema): string {

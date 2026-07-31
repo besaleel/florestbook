@@ -3,7 +3,8 @@
     "boasVindas": "Welcome to Florest Book!",
     "campoNome": "What is your name?",
     "comecar": "Start",
-    "ola": "Hello, {{nome}}!"
+    "ola": "Hello, {{nome}}!",
+    "saudacao": "Hello!"
   },
   "animais": {
     "elefante": "Elephant",
@@ -25,7 +26,8 @@
     "festejunina": "June Festival",
     "halloween": "Halloween",
     "natal": "Christmas",
-    "anonovo": "New Year"
+    "anonovo": "New Year",
+    "thanksgiven": "Thanksgiving"
   },
   "menu": {
     "idioma": "Language",
@@ -40,7 +42,8 @@
     "descricao": "Play without ads, forever.",
     "comprar": "Buy",
     "restaurar": "Restore purchase",
-    "cancelar": "Cancel"
+    "cancelar": "Cancel",
+    "nadaARestaurar": "No purchase found to restore."
   },
   "barreiraParental": {
     "titulo": "Adults only",

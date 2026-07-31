@@ -233,6 +233,7 @@ Copy-Item "C:\Sistemas\FLORESTBOOK\APK\android\app\build\outputs\bundle\release\
 | Arquivo | versionCode | versionName | Observações |
 |---------|-------------|-------------|-------------|
 | `florestbook-release-v01.aab` | 1 | 1.0.0 | Primeiro release. 12,62 MB. Assinado com `florestbook-release.jks` (SHA-256 `12:4B:66:40:…:F7:31`, conferido contra o APK). R8 + `shrinkResources` ativos. AdMob no bloco de **produção**. |
+| `florestbook-release-v02.aab` | 2 | 1.1.0 | 13,40 MB. **Google Play Billing** integrado (`@capgo/native-purchases`, Billing Library 8.3.0) — permissão `com.android.vending.BILLING` conferida no manifest mesclado; é o build que habilita cadastrar o produto `remove_ads` na Play Console. Tela inicial no padrão FarmBook, backgrounds novos + tema `thanksgiven`, correção do banner achatado em telas 16:9. Sem aviso de keystore no Gradle (chave de release). |
 
 ---
 

@@ -15,14 +15,30 @@
   height: 100%;
 }
 
-.palco {
-  // Proporcao dos assets: 1024x1536 (ESPECIFICATION 5).
-  position: relative;
-  flex: 0 1 auto;
-  aspect-ratio: 1024 / 1536;
+// Recebe a altura que SOBRA depois do rodape (banner incluido). E ela — e nao
+// 100vh — que dimensiona o palco: em aparelhos 16:9 o rodape consumia a conta
+// e o espaco do banner saia achatado.
+.area-palco {
+  // Container de tamanho: da ao palco a medida REAL que sobrou (100cqh),
+  // ja descontado o rodape — coisa que 100vh nao sabe fazer.
+  container-type: size;
+  display: flex;
+  flex: 1 1 0;
+  align-items: center;
+  justify-content: center;
   width: 100%;
-  max-width: calc(100vh * (1024 / 1536));
-  max-height: 100%;
+  // Sem isso o conteudo impede o encolhimento e o rodape e esmagado.
+  min-height: 0;
+}
+
+.palco {
+  // Proporcao dos assets: 1024x1536, EXATA em qualquer tela — o toque por
+  // pixel e as posicoes em % dos animais dependem dela (ESPECIFICATION 5).
+  // A largura cabe na tela E na altura disponivel; a altura vem SEMPRE do
+  // aspect-ratio, entao a proporcao nunca quebra em nenhum dos dois casos.
+  position: relative;
+  aspect-ratio: 1024 / 1536;
+  width: min(100%, calc(100cqh * (1024 / 1536)));
   overflow: hidden;
   background-position: center;
   background-size: cover;
@@ -225,6 +241,71 @@
   font-weight: 800;
 }
 
+// --- Fluxo de compra remove_ads (BACKLOG 6.7-6.12) ---
+
+// Centralizado no palco: e um dialogo de decisao do adulto, nao um menu.
+.painel-compra {
+  top: 50%;
+  right: auto;
+  left: 50%;
+  flex-direction: column;
+  gap: 0.6rem;
+  width: 78vw;
+  max-width: 340px;
+  padding: 1.1rem;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.titulo-painel {
+  margin: 0;
+  color: #fff;
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.texto-painel {
+  margin: 0;
+  color: rgb(255 255 255 / 85%);
+  font-size: 1rem;
+}
+
+.erro-painel {
+  margin: 0;
+  color: #ffb0a6;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.preco {
+  margin-left: 0.4rem;
+  font-weight: 900;
+}
+
+.botao-restaurar {
+  min-height: 48px;
+  border: 2px solid rgb(255 255 255 / 55%);
+  border-radius: 0.7rem;
+  background: none;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.botao-cancelar {
+  min-height: 44px;
+  border: none;
+  background: none;
+  color: rgb(255 255 255 / 75%);
+  font-size: 0.95rem;
+  text-decoration: underline;
+}
+
+.painel-compra .botao-salvar[disabled],
+.painel-compra .botao-restaurar[disabled] {
+  opacity: 0.5;
+}
+
 // --- Animais ---
 
 .animal {
@@ -386,6 +467,9 @@
 .banner {
   // Espaco reservado do banner nativo, 100% da largura (BACKLOG 4.9).
   // Sem anuncio disponivel a altura vai a zero e o layout nao quebra.
+  // NUNCA encolhe: o anuncio nativo e desenhado por cima com a altura real,
+  // e um espaco menor faria ele cobrir os links legais.
+  flex-shrink: 0;
   width: 100%;
   height: 0;
 }

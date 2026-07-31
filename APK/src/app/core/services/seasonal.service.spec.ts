@@ -103,6 +103,34 @@ describe('SeasonalService', () => {
     });
   });
 
+  describe('temaDaData — Thanksgiving restrito ao EN (BACKLOG 4B.14)', () => {
+    // 4a quinta-feira de novembro, datas reais: 2024=28/11, 2025=27/11,
+    // 2026=26/11, 2027=25/11.
+    it('acerta a 4a quinta de novembro', () => {
+      expect(br(servico.diaDeThanksgiving(2024))).toBe('28/11/2024');
+      expect(br(servico.diaDeThanksgiving(2025))).toBe('27/11/2025');
+      expect(br(servico.diaDeThanksgiving(2026))).toBe('26/11/2026');
+      expect(br(servico.diaDeThanksgiving(2027))).toBe('25/11/2027');
+    });
+
+    it('cobre do domingo anterior ao domingo seguinte (2026: 22 a 29/11)', () => {
+      expect(servico.temaDaData(new Date(2026, 10, 22), 'en')).toBe('thanksgiven');
+      expect(servico.temaDaData(new Date(2026, 10, 26), 'en')).toBe('thanksgiven');
+      expect(servico.temaDaData(new Date(2026, 10, 29), 'en')).toBe('thanksgiven');
+    });
+
+    it('nao vale fora da janela', () => {
+      expect(servico.temaDaData(new Date(2026, 10, 21), 'en')).toBe('standard');
+      expect(servico.temaDaData(new Date(2026, 10, 30), 'en')).toBe('standard');
+    });
+
+    it('NAO vale automaticamente nos demais idiomas', () => {
+      for (const idioma of ['pt', 'es', 'fr', 'it', 'de']) {
+        expect(servico.temaDaData(new Date(2026, 10, 26), idioma)).toBe('standard');
+      }
+    });
+  });
+
   describe('ano bissexto (BACKLOG 4B.12)', () => {
     it('trata 29/02 sem quebrar', () => {
       expect(servico.temaDaData(new Date(2028, 1, 29), 'pt')).toBe('standard');

@@ -1,8 +1,9 @@
 {
-  "anonovo": "#474c24",
-  "festejunina": "#4e7023",
-  "halloween": "#362716",
+  "anonovo": "#64481a",
+  "festejunina": "#7c6b2e",
+  "halloween": "#6d5b2b",
   "pascoa": "#586c29",
-  "standard": "#4c8334",
-  "natal": "#4a506b"
+  "thanksgiven": "#8e632a",
+  "standard": "#787834",
+  "natal": "#72676d"
 }

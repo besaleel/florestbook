@@ -3,7 +3,8 @@
     "boasVindas": "Bienvenue sur Florest Book !",
     "campoNome": "Comment t'appelles-tu ?",
     "comecar": "Commencer",
-    "ola": "Bonjour, {{nome}} !"
+    "ola": "Bonjour, {{nome}} !",
+    "saudacao": "Bonjour !"
   },
   "animais": {
     "elefante": "Éléphant",
@@ -25,7 +26,8 @@
     "festejunina": "Fête de la Saint-Jean",
     "halloween": "Halloween",
     "natal": "Noël",
-    "anonovo": "Nouvel An"
+    "anonovo": "Nouvel An",
+    "thanksgiven": "Thanksgiving"
   },
   "menu": {
     "idioma": "Langue",
@@ -40,7 +42,8 @@
     "descricao": "Joue sans publicité, pour toujours.",
     "comprar": "Acheter",
     "restaurar": "Restaurer l'achat",
-    "cancelar": "Annuler"
+    "cancelar": "Annuler",
+    "nadaARestaurar": "Aucun achat à restaurer."
   },
   "barreiraParental": {
     "titulo": "Réservé aux adultes",

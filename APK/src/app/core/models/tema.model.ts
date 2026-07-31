@@ -12,15 +12,18 @@ export type ChaveTema =
   | 'festejunina'
   | 'halloween'
   | 'natal'
-  | 'anonovo';
+  | 'anonovo'
+  | 'thanksgiven';
 
 /**
- * Janela sazonal. `pascoa` e movel (computus), por isso o tipo distingue as
- * duas formas em vez de usar so mes/dia.
+ * Janela sazonal. `pascoa` e `thanksgiving` sao moveis (computus e 4a
+ * quinta-feira de novembro), por isso o tipo as distingue em vez de usar so
+ * mes/dia.
  */
 export type JanelaSazonal =
   | { tipo: 'fixa'; inicio: { mes: number; dia: number }; fim: { mes: number; dia: number } }
-  | { tipo: 'pascoa'; diasAntes: number; diasDepois: number };
+  | { tipo: 'pascoa'; diasAntes: number; diasDepois: number }
+  | { tipo: 'thanksgiving'; diasAntes: number; diasDepois: number };
 
 export interface Tema {
   readonly chave: ChaveTema;
@@ -68,5 +71,15 @@ export const TEMAS: readonly Tema[] = [
     asset: 'background-anonovo.webp',
     // Atravessa a virada do ano: 29/12 a 05/01. A comparacao trata esse caso.
     janela: { tipo: 'fixa', inicio: { mes: 12, dia: 29 }, fim: { mes: 1, dia: 5 } },
+  },
+  {
+    chave: 'thanksgiven',
+    asset: 'background-thanksgiven.webp',
+    // 4a quinta-feira de novembro (movel, 22-28/11). Janela do domingo
+    // anterior ao domingo seguinte, mesma escala do Halloween (8 dias).
+    janela: { tipo: 'thanksgiving', diasAntes: 4, diasDepois: 3 },
+    // Feriado norte-americano: automatico so em EN, como a Festa Junina em PT
+    // (BACKLOG 4B.14). Segue disponivel no seletor manual em qualquer idioma.
+    idiomas: ['en'],
   },
 ];

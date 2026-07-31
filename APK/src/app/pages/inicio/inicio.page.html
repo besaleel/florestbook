@@ -1,46 +1,84 @@
 <ion-content [fullscreen]="true" [scrollY]="false">
-  <div class="tela" [style.--cor-tema]="fundo.corDaBorda()">
+  <div class="tela">
+    <!-- Controles no topo direito, como no modelo padrao da familia de jogos
+         (PROJECT/assets/modelo-primeira-tela.png). -->
+    <header class="topo">
+      <button
+        type="button"
+        class="botao-redondo"
+        [class.ativo]="painelIdioma()"
+        (click)="alternarPainelIdioma()"
+        [attr.aria-label]="'menu.idioma' | translate"
+      >
+        {{ bandeiras[settings.idioma()] }}
+      </button>
+
+      <button
+        type="button"
+        class="botao-redondo"
+        [class.mudo]="!settings.som()"
+        (click)="alternarSom()"
+        [attr.aria-label]="
+          (settings.som() ? 'menu.somLigado' : 'menu.somDesligado') | translate
+        "
+      >
+        <span aria-hidden="true">♪</span>
+      </button>
+    </header>
+
+    <!-- Mesma lista vertical da tela da floresta: bandeira + nome do idioma
+         no proprio idioma + tique no ativo (correcao do teste em aparelho). -->
+    @if (painelIdioma()) {
+      <div class="painel-idiomas" role="listbox">
+        @for (idioma of idiomas; track idioma) {
+          <button
+            type="button"
+            class="opcao-lista"
+            role="option"
+            [attr.aria-selected]="settings.idioma() === idioma"
+            [class.ativo]="settings.idioma() === idioma"
+            (click)="trocarIdioma(idioma)"
+          >
+            <span class="marca">{{ bandeiras[idioma] }}</span>
+            <span class="rotulo">{{ nomesIdioma[idioma] }}</span>
+            @if (settings.idioma() === idioma) {
+              <span class="tique" aria-hidden="true">✓</span>
+            }
+          </button>
+        }
+      </div>
+    }
+
     <img class="logo" src="assets/images/logo.webp" alt="Florest Book" />
 
-    <h1 class="boas-vindas">{{ 'inicio.boasVindas' | translate }}</h1>
-
-    <input
-      class="campo-nome"
-      type="text"
-      [ngModel]="nome()"
-      (ngModelChange)="nome.set($event)"
-      [placeholder]="'inicio.campoNome' | translate"
-      maxlength="20"
-      autocomplete="off"
-    />
+    <!-- Cartao branco central do modelo: saudacao + pergunta + nome. -->
+    <section class="cartao">
+      <h1 class="saudacao">{{ 'inicio.saudacao' | translate }}</h1>
+      <p class="pergunta">{{ 'inicio.campoNome' | translate }}</p>
+      <input
+        class="campo-nome"
+        type="text"
+        [ngModel]="nome()"
+        (ngModelChange)="nome.set($event)"
+        maxlength="20"
+        autocomplete="off"
+      />
+    </section>
 
     <button class="botao-comecar" type="button" (click)="comecar()">
       {{ 'inicio.comecar' | translate }}
     </button>
 
-    <div class="idiomas">
-      @for (idioma of idiomas; track idioma) {
-        <button
-          type="button"
-          class="bandeira"
-          [class.ativo]="settings.idioma() === idioma"
-          (click)="trocarIdioma(idioma)"
-          [attr.aria-label]="idioma"
-        >
-          {{ bandeiras[idioma] }}
-        </button>
-      }
-    </div>
-
-    <button
-      class="botao-som"
-      type="button"
-      (click)="alternarSom()"
-      [attr.aria-label]="
-        (settings.som() ? 'menu.somLigado' : 'menu.somDesligado') | translate
-      "
-    >
-      {{ settings.som() ? '🔊' : '🔇' }}
-    </button>
+    <!-- Links legais no rodape, abrindo no navegador do sistema
+         (BACKLOG 7.5). -->
+    <nav class="legais">
+      <button type="button" (click)="abrirDocumento('termos')">
+        {{ 'legal.termos' | translate }}
+      </button>
+      <span aria-hidden="true">·</span>
+      <button type="button" (click)="abrirDocumento('privacidade')">
+        {{ 'legal.privacidade' | translate }}
+      </button>
+    </nav>
   </div>
 </ion-content>

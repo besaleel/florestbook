@@ -1,49 +1,175 @@
-// Tela inicial (ESPECIFICATION 4.1, BACKLOG 3.1-3.5).
-// Alvos de toque generosos: o publico tem 2 a 6 anos.
+// Tela inicial no padrao da familia de jogos (modelo-primeira-tela.png):
+// gradiente verde fixo, controles redondos no topo direito, icone do app ao
+// centro, cartao branco com a saudacao e o nome, botao Comecar amarelo e
+// links legais no rodape. Alvos de toque generosos: o publico tem 2 a 6 anos.
 
 .tela {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 4vh;
+  justify-content: space-evenly;
+  gap: 2vh;
   min-height: 100%;
-  padding: 6vh 8vw calc(6vh + env(safe-area-inset-bottom));
-  background: var(--cor-tema, #1f6b3b);
+  padding: calc(2vh + env(safe-area-inset-top)) 7vw
+    calc(2.5vh + env(safe-area-inset-bottom));
+  // Gradiente do modelo: agua-claro no alto, verde firme na base. Fixo por
+  // padrao da familia de jogos — nao acompanha o tema sazonal.
+  background: linear-gradient(180deg, #cfe6da 0%, #b5dc8d 45%, #7dbf52 100%);
   text-align: center;
 }
 
-.logo {
-  width: min(62vw, 300px);
-  height: auto;
+.topo {
+  display: flex;
+  gap: 0.9rem;
+  align-self: flex-end;
 }
 
-.boas-vindas {
-  margin: 0;
+.botao-redondo {
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 3px 10px rgb(0 0 0 / 18%);
+  color: #222;
+  font-size: 1.6rem;
+  line-height: 1;
+  transition: transform 120ms ease;
+
+  &.ativo {
+    outline: 3px solid #ffd54a;
+    transform: scale(1.08);
+  }
+
+  // Som desligado: a nota fica apagada e riscada, sem trocar de icone.
+  &.mudo {
+    color: #b0b0b0;
+
+    span {
+      position: relative;
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: -15%;
+        width: 130%;
+        height: 3px;
+        border-radius: 2px;
+        background: #d33;
+        transform: rotate(-45deg);
+      }
+    }
+  }
+}
+
+// Mesma lista do seletor da floresta, ancorada sob os botoes do topo.
+.painel-idiomas {
+  position: absolute;
+  top: calc(2vh + env(safe-area-inset-top) + 64px);
+  right: 7vw;
+  z-index: 45;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  width: 62vw;
+  max-width: 280px;
+  max-height: 55vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0.7rem;
+  border-radius: 1rem;
+  background: rgb(0 0 0 / 72%);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 45%);
+}
+
+.opcao-lista {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  width: 100%;
+  min-height: 52px;
+  padding: 0.4rem 0.7rem;
+  border: 2px solid transparent;
+  border-radius: 0.7rem;
+  background: rgb(255 255 255 / 12%);
   color: #fff;
-  font-size: clamp(1.25rem, 5.5vw, 1.9rem);
-  font-weight: 800;
-  line-height: 1.25;
-  // Contraste garantido sobre qualquer tema, claro ou escuro
-  // (ESPECIFICATION 4.2).
-  text-shadow: 0 2px 6px rgb(0 0 0 / 55%);
+  font-size: 0.95rem;
+  text-align: left;
+
+  .marca {
+    flex: 0 0 auto;
+    font-size: 1.35rem;
+    line-height: 1;
+  }
+
+  .rotulo {
+    flex: 1 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .tique {
+    flex: 0 0 auto;
+    color: #ffd54a;
+    font-size: 1.1rem;
+  }
+
+  &.ativo {
+    border-color: #ffd54a;
+    background: rgb(255 255 255 / 26%);
+  }
+}
+
+// O logo.webp ja traz a moldura arredondada na propria arte; aqui so o halo
+// suave que o destaca do gradiente, como no modelo.
+.logo {
+  width: min(58vw, 280px);
+  height: auto;
+  border-radius: 12%;
+  filter: drop-shadow(0 6px 16px rgb(0 0 0 / 20%));
+}
+
+.cartao {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  width: 100%;
+  max-width: 400px;
+  padding: 1.4rem 1.3rem 1.5rem;
+  border-radius: 26px;
+  background: rgb(255 255 255 / 96%);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 14%);
+}
+
+.saudacao {
+  margin: 0;
+  color: #5b3a12;
+  font-size: clamp(1.8rem, 8vw, 2.6rem);
+  font-weight: 900;
+}
+
+.pergunta {
+  margin: 0;
+  color: #5b3a12;
+  font-size: clamp(1.05rem, 4.5vw, 1.35rem);
+  font-weight: 700;
 }
 
 .campo-nome {
   width: 100%;
-  max-width: 340px;
-  min-height: 56px;
+  min-height: 60px;
   padding: 0 1.25rem;
-  border: 3px solid #fff;
-  border-radius: 999px;
-  background: rgb(255 255 255 / 92%);
-  color: #1c1c1c;
-  font-size: 1.15rem;
+  border: 3px solid #f0b73f;
+  border-radius: 20px;
+  background: #fffdf7;
+  color: #5b3a12;
+  font-size: clamp(1.3rem, 6vw, 1.7rem);
+  font-weight: 800;
   text-align: center;
-
-  &::placeholder {
-    color: #6b6b6b;
-  }
 
   &:focus {
     outline: 3px solid #ffd54a;
@@ -52,67 +178,48 @@
 }
 
 .botao-comecar {
-  min-width: min(70vw, 300px);
+  min-width: min(72vw, 320px);
   // Alvo bem acima dos 48 dp minimos: e o botao principal da tela.
-  min-height: 72px;
+  min-height: 74px;
   padding: 0 2rem;
   border: none;
   border-radius: 999px;
   background: linear-gradient(180deg, #ffd54a, #f5a623);
-  box-shadow: 0 6px 0 #c9821a, 0 10px 18px rgb(0 0 0 / 30%);
+  box-shadow: 0 6px 0 #c9821a, 0 10px 18px rgb(0 0 0 / 25%);
   color: #4a2c00;
-  font-size: clamp(1.4rem, 6vw, 2rem);
+  font-size: clamp(1.5rem, 7vw, 2.1rem);
   font-weight: 900;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   transition: transform 120ms ease, box-shadow 120ms ease;
 
   &:active {
     transform: translateY(4px);
-    box-shadow: 0 2px 0 #c9821a, 0 4px 10px rgb(0 0 0 / 30%);
+    box-shadow: 0 2px 0 #c9821a, 0 4px 10px rgb(0 0 0 / 25%);
   }
 }
 
-.idiomas {
+.legais {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  justify-content: center;
-}
+  gap: 0.6rem;
+  align-items: center;
+  color: #3f4a33;
 
-.bandeira {
-  width: 52px;
-  height: 52px;
-  padding: 0;
-  border: 3px solid transparent;
-  border-radius: 50%;
-  background: rgb(255 255 255 / 22%);
-  font-size: 1.6rem;
-  line-height: 1;
-  transition: transform 120ms ease;
-
-  &.ativo {
-    border-color: #ffd54a;
-    background: rgb(255 255 255 / 40%);
-    transform: scale(1.12);
+  button {
+    padding: 0.5rem 0.2rem;
+    border: none;
+    background: none;
+    color: #3f4a33;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-decoration: underline;
   }
-}
-
-.botao-som {
-  width: 60px;
-  height: 60px;
-  border: 3px solid rgb(255 255 255 / 70%);
-  border-radius: 50%;
-  // Fundo proprio: o contraste nao depende da cor do cenario
-  // (ESPECIFICATION 4.2, BACKLOG 4.7).
-  background: rgb(0 0 0 / 32%);
-  font-size: 1.7rem;
-  line-height: 1;
 }
 
 // Acessibilidade (ESPECIFICATION 2.2, BACKLOG 4.13).
 @media (prefers-reduced-motion: reduce) {
   .botao-comecar,
-  .bandeira {
+  .botao-redondo {
     transition: none;
   }
 }

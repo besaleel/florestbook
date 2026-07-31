@@ -2,6 +2,10 @@
   <!-- As sobras do palco recebem a cor solida do tema ativo
        (ESPECIFICATION 5, BACKLOG 4.1). -->
   <div class="moldura" [style.background]="fundo.corDaBorda()">
+    <!-- O palco ocupa a ALTURA QUE SOBRA depois do rodape, mantendo a
+         proporcao 2:3 exata (o toque por pixel depende dela). Em telas curtas
+         ele estreita em vez de esmagar o banner. -->
+    <div class="area-palco">
     <div
       class="palco"
       [style.background-image]="'url(' + fundo.imagem() + ')'"
@@ -123,6 +127,67 @@
         </div>
       }
 
+      <!-- Fluxo de compra remove_ads (BACKLOG 6.7-6.12): a barreira parental
+           vem SEMPRE antes da loja — exigencia da Politica para Familias. -->
+      @if (painel() === 'compra') {
+        <div class="painel painel-compra">
+          @if (etapaCompra() === 'barreira') {
+            <h2 class="titulo-painel">{{ 'barreiraParental.titulo' | translate }}</h2>
+            <p class="texto-painel">
+              {{ 'barreiraParental.instrucao' | translate: { a: barreiraA(), b: barreiraB() } }}
+            </p>
+            @if (erroBarreira()) {
+              <p class="erro-painel">{{ 'barreiraParental.erro' | translate }}</p>
+            }
+            <input
+              class="campo-nome"
+              type="number"
+              inputmode="numeric"
+              [value]="respostaBarreira()"
+              (input)="respostaBarreira.set($any($event.target).value)"
+              (keyup.enter)="confirmarBarreira()"
+              autocomplete="off"
+              autofocus
+            />
+            <button type="button" class="botao-salvar" (click)="confirmarBarreira()">
+              {{ 'barreiraParental.confirmar' | translate }}
+            </button>
+            <button type="button" class="botao-cancelar" (click)="painel.set(null)">
+              {{ 'anuncios.cancelar' | translate }}
+            </button>
+          } @else {
+            <h2 class="titulo-painel">{{ 'anuncios.titulo' | translate }}</h2>
+            <p class="texto-painel">{{ 'anuncios.descricao' | translate }}</p>
+            @if (avisoCompra()) {
+              <p class="erro-painel">{{ 'anuncios.' + avisoCompra() | translate }}</p>
+            }
+            <button
+              type="button"
+              class="botao-salvar"
+              [disabled]="billing.processando()"
+              (click)="comprarRemocao()"
+            >
+              {{ 'anuncios.comprar' | translate }}
+              <!-- Preco SEMPRE vindo do Google Play (BACKLOG 6.8). -->
+              @if (billing.preco(); as preco) {
+                <span class="preco">{{ preco }}</span>
+              }
+            </button>
+            <button
+              type="button"
+              class="botao-restaurar"
+              [disabled]="billing.processando()"
+              (click)="restaurarCompra()"
+            >
+              {{ 'anuncios.restaurar' | translate }}
+            </button>
+            <button type="button" class="botao-cancelar" (click)="painel.set(null)">
+              {{ 'anuncios.cancelar' | translate }}
+            </button>
+          }
+        </div>
+      }
+
       <!-- Os 5 animais (BACKLOG 4.2-4.5, 4.11-4.12, 4.15).
            O toque e resolvido pelo palco, por pixel opaco (BACKLOG 4.4): aqui
            os animais sao apenas imagens, sem area retangular propria. Cada um
@@ -152,6 +217,7 @@
       </div>
 
     </div>
+    </div>
 
     <!-- Rodape ABAIXO do palco: a faixa fica imediatamente acima do banner e
          nenhum dos dois cobre os animais (ESPECIFICATION 5, BACKLOG 5.3). -->
@@ -160,7 +226,7 @@
 
       <div class="acoes-rodape">
         @if (!settings.semAnuncios()) {
-          <button type="button" class="remover-anuncio">
+          <button type="button" class="remover-anuncio" (click)="abrirCompra()">
             {{ 'anuncios.remover' | translate }}
           </button>
         }

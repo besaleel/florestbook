@@ -202,9 +202,12 @@ Regras completas em ESPECIFICATION § 4.3. Depende de 2.3 (`SettingsService`).
       ano (31/12 → 01/01) e ano bissexto
 - [ ] **4B.13** Verificação manual com a data do aparelho alterada, confirmando
       que a escolha manual nunca é sobrescrita
-- [ ] **4B.14** *(futuro)* Thanksgiving não tem asset e não entra no registro.
-      Se for produzido, basta somar a linha (4ª quinta de novembro, idioma EN) —
-      a lógica já suporta
+- [x] **4B.14** ~~Thanksgiving não tem asset~~ — **asset entregue em
+      31/07/2026** (`background-thanksgiven.png`) e tema registrado: janela
+      móvel na **4ª quinta de novembro** (do domingo anterior ao seguinte,
+      8 dias como o Halloween), automático **só em EN** — como a Festa Junina
+      em PT. `diaDeThanksgiving()` testado com as datas reais de 2024–2027.
+      Rótulos nos 6 idiomas
 
 ## Fase 5 — Faixa do nome e áudio
 
@@ -246,15 +249,29 @@ Regras completas em ESPECIFICATION § 4.3. Depende de 2.3 (`SettingsService`).
 - [x] **6.4** App ID no `AndroidManifest.xml`:
       `ca-app-pub-3480885465464323~9513221026` (sempre o de produção)
 - [x] **6.5** Tratar ausência de rede: recolher o banner sem quebrar o layout
-- [ ] **6.6** Integrar Google Play Billing
-- [ ] **6.7** Fluxo de compra do produto `remove_ads` (não-consumível)
-- [ ] **6.8** Exibir preço **vindo do Google Play** (nunca fixo no código);
-      US$ 1,90 é apenas referência
-- [ ] **6.9** Remover banner e botão após a compra (estado persistido)
-- [ ] **6.10** **Restaurar compra** (obrigatório para reinstalação/troca de
-      aparelho)
-- [ ] **6.11** Barreira parental antes da tela de pagamento
-- [ ] **6.12** Falha ou cancelamento da compra retorna ao jogo sem bloqueio
+- [x] **6.6** Integrar Google Play Billing — `@capgo/native-purchases` 8.6.4
+      com **Billing Library 8.3.0** (mínimo exigido pelo Google desde ago/2026).
+      Permissão `com.android.vending.BILLING` conferida no manifest mesclado
+      do release v02
+- [x] **6.7** Fluxo de compra do produto `remove_ads` (não-consumível) —
+      `BillingService.comprar()`; compra **pendente** (ex.: boleto) não concede
+      o direito na hora, é reconhecida na abertura seguinte quando confirmar
+- [x] **6.8** Exibir preço **vindo do Google Play** (nunca fixo no código);
+      `priceString` do produto, exibido no botão Comprar. Sem resposta do Play
+      o botão aparece sem preço, nunca com valor inventado
+- [x] **6.9** Remover banner e botão após a compra (estado persistido) — o
+      rodapé observa `semAnuncios`; `removerBanner()` tira o banner nativo
+- [x] **6.10** **Restaurar compra** — botão Restaurar no painel **e**
+      verificação silenciosa em toda abertura (`getPurchases`), então
+      reinstalação/troca de aparelho recupera até sem toque do usuário
+- [x] **6.11** Barreira parental antes da tela de pagamento — multiplicação
+      6–9 × 6–9, sempre exigida ao abrir o fluxo
+- [x] **6.12** Falha ou cancelamento da compra retorna ao jogo sem bloqueio —
+      todo caminho de erro fecha o painel e o jogo segue com anúncios
+- [ ] **6.14** ⚠️ **Cadastrar o produto `remove_ads` na Play Console** (subir o
+      AAB v02 antes — a Console só libera o cadastro com o BILLING no manifest)
+      e depois **testar a compra em aparelho real** com testador de licença
+      *(depende de você)*
 - [x] ⚠️ **6.13** **TROCAR PARA OS IDs DE PRODUÇÃO ANTES DA PUBLICAÇÃO ABERTA**
 
       *Bloqueia a monetização: enquanto isso o app exibe "This is a test ad"
@@ -383,9 +400,20 @@ Pontos levantados por você no primeiro teste em aparelho, e o que foi feito:
 | 6 | **Faltam termos de uso e privacidade** | Documentos criados em `DEPLOY/` e links no rodapé da tela principal, abrindo no **navegador do sistema** via Capacitor Browser — a Política para Famílias exige que links externos saiam do contexto infantil |
 | 7 | **AdMob liberado com key de produção** | Integrado com a configuração infantil **obrigatória** (não personalizados + `initializeForTesting`). A escolha do bloco é automática: **debug → teste, release → produção**, resolvida em tempo de build por `ngDevMode`. Assim seu teste em aparelho é seguro e o AAB publicado já sai monetizando |
 
-> **Play Billing** fica para depois da primeira publicação, como você indicou —
-> o produto `remove_ads` precisa existir na Play Console antes de a integração
-> poder ser testada. Os itens 6.6–6.12 seguem pendentes por essa dependência.
+> ~~**Play Billing** fica para depois da primeira publicação~~ — **integrado em
+> 31/07/2026** (itens 6.6–6.12, AAB v02). A ordem correta ficou: subir o v02 na
+> Play Console → cadastrar o produto `remove_ads` (só libera com o BILLING no
+> manifest, e o v02 já tem) → testar a compra em aparelho real (item 6.14).
+
+## Entrega de 31/07/2026 — padronização visual + Billing
+
+| O que | Situação |
+|-------|----------|
+| **Tela inicial no padrão FarmBook** (`modelo-primeira-tela.png`): gradiente verde fixo, bandeira + botão de música em círculos no topo direito, ícone do app ao centro, cartão branco "Olá! / Qual é o seu nome?", COMEÇAR amarelo, links legais no rodapé | ✅ Conferida por screenshot em 412×915 |
+| **Backgrounds substituídos** pelos novos de `PROJECT/assets` (`npm run assets`, 7 fundos, 2,4 MB em WebP) | ✅ |
+| **Tema Ação de Graças** (`thanksgiven`) — item 4B.14 | ✅ 27/27 testes |
+| **Banner achatado em telas 16:9** (seu relato): o palco media a largura por `100vh` sem descontar o rodapé; em aparelho "curto" o espaço do banner era esmagado. Agora o palco ocupa a **altura restante** via container query, com proporção 2:3 **exata** (o toque por pixel depende dela) e o espaço do banner nunca encolhe (`flex-shrink: 0`) | ✅ Medido em 360×640, 360×640+banner e 412×915+banner |
+| **Google Play Billing** (6.6–6.12) | ✅ AAB v02 pronto |
 
 ## Achados desta entrega (31/07/2026)
 

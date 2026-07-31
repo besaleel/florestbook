@@ -28,6 +28,18 @@ export class SeasonalService {
   }
 
   /**
+   * Thanksgiving: 4a quinta-feira de novembro. Novembro comeca entre domingo
+   * e sabado; a primeira quinta cai entre os dias 1 e 7, e as demais somam
+   * multiplos de 7.
+   */
+  diaDeThanksgiving(ano: number): Date {
+    const primeiroDeNovembro = new Date(ano, 10, 1);
+    // getDay(): 0=domingo ... 4=quinta. Dias ate a primeira quinta do mes.
+    const atePrimeiraQuinta = (4 - primeiroDeNovembro.getDay() + 7) % 7;
+    return new Date(ano, 10, 1 + atePrimeiraQuinta + 21);
+  }
+
+  /**
    * Tema correspondente a data e ao idioma. Em caso de sobreposicao vale a
    * janela de MENOR duracao (a mais especifica).
    */
@@ -61,10 +73,14 @@ export class SeasonalService {
   private dentroDaJanela(janela: JanelaSazonal, data: Date): boolean {
     const dia = this.meiaNoite(data);
 
-    if (janela.tipo === 'pascoa') {
-      const pascoa = this.meiaNoite(this.domingoDePascoa(dia.getFullYear()));
-      const inicio = this.somarDias(pascoa, -janela.diasAntes);
-      const fim = this.somarDias(pascoa, janela.diasDepois);
+    if (janela.tipo === 'pascoa' || janela.tipo === 'thanksgiving') {
+      const centro = this.meiaNoite(
+        janela.tipo === 'pascoa'
+          ? this.domingoDePascoa(dia.getFullYear())
+          : this.diaDeThanksgiving(dia.getFullYear()),
+      );
+      const inicio = this.somarDias(centro, -janela.diasAntes);
+      const fim = this.somarDias(centro, janela.diasDepois);
       return dia >= inicio && dia <= fim;
     }
 
@@ -77,7 +93,9 @@ export class SeasonalService {
   }
 
   private duracaoEmDias(janela: JanelaSazonal, data: Date): number {
-    if (janela.tipo === 'pascoa') return janela.diasAntes + janela.diasDepois + 1;
+    if (janela.tipo === 'pascoa' || janela.tipo === 'thanksgiving') {
+      return janela.diasAntes + janela.diasDepois + 1;
+    }
 
     const ano = data.getFullYear();
     const inicio = new Date(ano, janela.inicio.mes - 1, janela.inicio.dia);
