@@ -30,6 +30,13 @@ DEPLOY/*.aab
 APK/src/assets/images/
 APK/src/assets/sounds/
 
+# --- Assets originais: obra comercial, fora do repositorio publico ---
+# Sao a FONTE de tudo que o pipeline gera (ver DOC/ESPECIFICATION.md secao 3).
+# Ficam apenas na maquina do desenvolvedor e em backup proprio; sem eles
+# `npm run assets` e `npm run icons` nao tem o que converter.
+PROJECT/assets/
+PROJECT/sounds/
+
 # --- Sistema / IDE ---
 Thumbs.db
 Desktop.ini
