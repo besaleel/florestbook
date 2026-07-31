@@ -1,0 +1,40 @@
+# --- Segurança: NUNCA versionar ---
+*.jks
+*.keystore
+keystore.properties
+local.properties
+
+# --- Dependências ---
+node_modules/
+
+# --- Build Angular/Ionic ---
+APK/www/
+APK/.angular/
+APK/dist/
+APK/coverage/
+
+# --- Build Android ---
+APK/android/.gradle/
+APK/android/build/
+APK/android/app/build/
+APK/android/app/src/main/assets/public/
+APK/android/app/src/main/res/raw/
+APK/android/capacitor-cordova-android-plugins/
+*.apk
+*.aab
+
+# --- Artefatos de publicação ---
+DEPLOY/*.aab
+
+# --- Assets derivados (gerados por npm run assets / npm run icons) ---
+APK/src/assets/images/
+APK/src/assets/sounds/
+
+# --- Sistema / IDE ---
+Thumbs.db
+Desktop.ini
+.DS_Store
+.idea/
+*.iml
+.vscode/
+!.vscode/extensions.json

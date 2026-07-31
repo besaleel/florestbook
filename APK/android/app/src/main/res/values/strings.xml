@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Florest Book</string>
+    <string name="title_activity_main">Florest Book</string>
+    <string name="package_name">com.florestbook.app</string>
+    <string name="custom_url_scheme">com.florestbook.app</string>
+</resources>
