@@ -11,6 +11,7 @@ const CHAVES = {
   nome: 'nome',
   idioma: 'idioma',
   som: 'som',
+  musica: 'musica',
   background: 'background',
   escolhaManual: 'backgroundEscolhidoManualmente',
   semAnuncios: 'semAnuncios',
@@ -28,7 +29,10 @@ export class SettingsService {
   /** Nome da crianca. Vazio e valido: o jogo funciona normalmente sem nome. */
   readonly nome = signal('');
   readonly idioma = signal<Idioma>(IDIOMA_PADRAO);
+  /** Sons dos animais. Independente da musica: sao DOIS controles na barra. */
   readonly som = signal(true);
+  /** Musica de fundo. Desligar a musica nao cala os animais, e vice-versa. */
+  readonly musica = signal(true);
   readonly background = signal<ChaveTema>('standard');
 
   /**
@@ -47,13 +51,13 @@ export class SettingsService {
   async carregar(): Promise<void> {
     if (this.carregado) return;
 
-    const [nome, idioma, som, background, manual, semAnuncios] = await Promise.all(
-      Object.values(CHAVES).map((key) => Preferences.get({ key })),
-    );
+    const [nome, idioma, som, musica, background, manual, semAnuncios] =
+      await Promise.all(Object.values(CHAVES).map((key) => Preferences.get({ key })));
 
     if (nome.value) this.nome.set(nome.value);
     if (this.ehIdiomaValido(idioma.value)) this.idioma.set(idioma.value);
     if (som.value !== null) this.som.set(som.value === 'true');
+    if (musica.value !== null) this.musica.set(musica.value === 'true');
     if (background.value) this.background.set(background.value as ChaveTema);
     if (manual.value !== null) this.backgroundEscolhidoManualmente.set(manual.value === 'true');
     if (semAnuncios.value !== null) this.semAnuncios.set(semAnuncios.value === 'true');
@@ -75,6 +79,11 @@ export class SettingsService {
   async definirSom(ligado: boolean): Promise<void> {
     this.som.set(ligado);
     await Preferences.set({ key: CHAVES.som, value: String(ligado) });
+  }
+
+  async definirMusica(ligada: boolean): Promise<void> {
+    this.musica.set(ligada);
+    await Preferences.set({ key: CHAVES.musica, value: String(ligada) });
   }
 
   /**

@@ -65,8 +65,16 @@ export class InicioPage implements OnInit {
     this.painelIdioma.set(false);
   }
 
+  /**
+   * Interruptor GERAL de audio da tela inicial: liga/desliga musica e sons
+   * dos animais juntos. Os controles separados ficam na tela da floresta.
+   */
   protected async alternarSom(): Promise<void> {
-    await this.settings.definirSom(!this.settings.som());
+    const ligar = !(this.settings.som() || this.settings.musica());
+    await Promise.all([
+      this.settings.definirSom(ligar),
+      this.settings.definirMusica(ligar),
+    ]);
   }
 
   protected async abrirDocumento(qual: 'termos' | 'privacidade'): Promise<void> {

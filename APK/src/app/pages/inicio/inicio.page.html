@@ -16,10 +16,11 @@
       <button
         type="button"
         class="botao-redondo"
-        [class.mudo]="!settings.som()"
+        [class.mudo]="!settings.som() && !settings.musica()"
         (click)="alternarSom()"
         [attr.aria-label]="
-          (settings.som() ? 'menu.somLigado' : 'menu.somDesligado') | translate
+          ((settings.som() || settings.musica()) ? 'menu.somLigado' : 'menu.somDesligado')
+            | translate
         "
       >
         <span aria-hidden="true">♪</span>

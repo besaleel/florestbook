@@ -268,10 +268,13 @@ Regras completas em ESPECIFICATION § 4.3. Depende de 2.3 (`SettingsService`).
       6–9 × 6–9, sempre exigida ao abrir o fluxo
 - [x] **6.12** Falha ou cancelamento da compra retorna ao jogo sem bloqueio —
       todo caminho de erro fecha o painel e o jogo segue com anúncios
-- [ ] **6.14** ⚠️ **Cadastrar o produto `remove_ads` na Play Console** (subir o
-      AAB v02 antes — a Console só libera o cadastro com o BILLING no manifest)
-      e depois **testar a compra em aparelho real** com testador de licença
-      *(depende de você)*
+- [~] **6.14** ⚠️ ~~Cadastrar o produto `remove_ads` na Play Console~~ —
+      ✅ **produto único criado em 01/08/2026**. Falta **testar a compra em
+      aparelho real** com testador de licença *(depende de você)*:
+      app instalado pela **trilha de teste interno** (não sideload), conta do
+      aparelho cadastrada em Configurações → Testes de licença, produto com
+      estado **Ativo**. Conferir: preço real no botão Comprar, compra, banner
+      some, reinstalar e ver a restauração automática
 - [x] ⚠️ **6.13** **TROCAR PARA OS IDs DE PRODUÇÃO ANTES DA PUBLICAÇÃO ABERTA**
 
       *Bloqueia a monetização: enquanto isso o app exibe "This is a test ad"

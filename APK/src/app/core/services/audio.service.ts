@@ -30,7 +30,9 @@ const ANIMAIS: readonly ChaveAnimal[] = ['elefante', 'leao', 'lobo', 'macaco', '
  *  - um som por vez (novo toque interrompe o anterior);
  *  - a musica de fundo abaixa enquanto o animal fala;
  *  - loop continuo, sem emenda audivel;
- *  - respeita o botao de som, cujo estado e persistido;
+ *  - DOIS controles independentes e persistidos: `musica()` governa a trilha
+ *    de fundo e `som()` governa as vozes dos animais — desligar um nao
+ *    afeta o outro;
  *  - pausa quando o app vai a segundo plano.
  */
 @Injectable({ providedIn: 'root' })
@@ -46,22 +48,27 @@ export class AudioService {
   private liberado = false;
 
   constructor() {
-    // O botao de som vale para tudo: musica e vozes dos animais.
+    // Botao da musica: governa SO a trilha de fundo.
     effect(() => {
-      const ligado = this.settings.som();
-      if (!ligado) {
-        this.pararTudo();
+      const ligada = this.settings.musica();
+      if (!ligada) {
+        this.pararMusica();
       } else if (this.liberado) {
         void this.tocarMusica();
       }
     });
 
+    // Botao de som: governa SO as vozes dos animais.
+    effect(() => {
+      if (!this.settings.som()) this.pararAnimal();
+    });
+
     void App.addListener('appStateChange', ({ isActive }) => {
       if (!isActive) {
-        // Segundo plano: silencia sem perder o estado do botao de som.
+        // Segundo plano: silencia sem perder o estado dos botoes.
         this.musica?.pause();
         this.tocando?.pause();
-      } else if (this.settings.som() && this.liberado) {
+      } else if (this.settings.musica() && this.liberado) {
         void this.tocarMusica();
       }
     });
@@ -93,7 +100,7 @@ export class AudioService {
    */
   async liberarComGesto(): Promise<void> {
     this.liberado = true;
-    if (this.settings.som()) await this.tocarMusica();
+    if (this.settings.musica()) await this.tocarMusica();
   }
 
   /**
@@ -141,7 +148,7 @@ export class AudioService {
   }
 
   private async tocarMusica(): Promise<void> {
-    if (!this.settings.som() || !this.liberado) return;
+    if (!this.settings.musica() || !this.liberado) return;
     this.precarregar();
     if (!this.musica || !this.musica.paused) return;
 
@@ -172,10 +179,16 @@ export class AudioService {
     }, 20);
   }
 
-  private pararTudo(): void {
+  private pararMusica(): void {
     clearInterval(this.rampa);
     this.musica?.pause();
+    // Rearmada no volume normal para quando for religada.
+    if (this.musica) this.musica.volume = VOLUME_MUSICA;
+  }
+
+  private pararAnimal(): void {
     if (this.tocando) {
+      // O `pause` dispara o `restaurar` do som ativo, desfazendo o ducking.
       this.tocando.pause();
       this.tocando.currentTime = 0;
       this.tocando = undefined;

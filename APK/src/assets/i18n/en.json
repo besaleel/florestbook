@@ -33,8 +33,10 @@
     "idioma": "Language",
     "background": "Scenery",
     "som": "Sound",
-    "somLigado": "Sound on",
-    "somDesligado": "Sound off"
+    "somLigado": "Animal sounds on",
+    "somDesligado": "Animal sounds off",
+    "musicaLigada": "Music on",
+    "musicaDesligada": "Music off"
   },
   "anuncios": {
     "remover": "Remove Ads",

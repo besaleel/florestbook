@@ -33,8 +33,10 @@
     "idioma": "Sprache",
     "background": "Kulisse",
     "som": "Ton",
-    "somLigado": "Ton an",
-    "somDesligado": "Ton aus"
+    "somLigado": "Tiergeräusche an",
+    "somDesligado": "Tiergeräusche aus",
+    "musicaLigada": "Musik an",
+    "musicaDesligada": "Musik aus"
   },
   "anuncios": {
     "remover": "Werbung entfernen",

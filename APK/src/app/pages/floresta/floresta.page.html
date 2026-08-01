@@ -1,197 +1,24 @@
 <ion-content [fullscreen]="true" [scrollY]="false">
-  <!-- As sobras do palco recebem a cor solida do tema ativo
-       (ESPECIFICATION 5, BACKLOG 4.1). -->
-  <div class="moldura" [style.background]="fundo.corDaBorda()">
-    <!-- O palco ocupa a ALTURA QUE SOBRA depois do rodape, mantendo a
-         proporcao 2:3 exata (o toque por pixel depende dela). Em telas curtas
-         ele estreita em vez de esmagar o banner. -->
-    <div class="area-palco">
+  <!-- Padrao da familia de jogos (FarmBook): o cenario cobre a TELA INTEIRA e
+       o excesso sangra pelas bordas; barra, paineis e rodape flutuam sobre
+       ele. A cor do tema so aparece se a imagem ainda nao carregou. -->
+  <div class="floresta" [style.background]="fundo.corDaBorda()">
+    <!-- Fundo em tela cheia: `cover` elimina as sobras da moldura antiga. -->
     <div
       class="palco"
       [style.background-image]="'url(' + fundo.imagem() + ')'"
-      (pointerdown)="tocarNoPalco($event)"
-    >
-      <!-- Barra superior (BACKLOG 4.6). Os fundos semitransparentes garantem
-           contraste tanto nos temas diurnos quanto nas cenas noturnas. -->
-      <header class="barra">
-        <!-- Tocar no cracha abre a edicao do nome. Sem nome salvo, ele
-             convida a preencher em vez de sumir. -->
-        <button
-          type="button"
-          class="cracha"
-          (click)="editarNome()"
-          [attr.aria-label]="'inicio.campoNome' | translate"
-        >
-          <span class="avatar" aria-hidden="true">🧒</span>
-          <span class="nome">{{ settings.nome() || ('inicio.campoNome' | translate) }}</span>
-          <span class="lapis" aria-hidden="true">✏️</span>
-        </button>
+      aria-hidden="true"
+    ></div>
 
-        <nav class="acoes">
-          <button
-            type="button"
-            class="acao"
-            [class.ativo]="painel() === 'idioma'"
-            (click)="alternarPainel('idioma')"
-            [attr.aria-label]="'menu.idioma' | translate"
-          >
-            {{ bandeiras[settings.idioma()] }}
-          </button>
-
-          <button
-            type="button"
-            class="acao"
-            [class.ativo]="painel() === 'background'"
-            (click)="alternarPainel('background')"
-            [attr.aria-label]="'menu.background' | translate"
-          >
-            🖼️
-          </button>
-
-          <button
-            type="button"
-            class="acao"
-            (click)="alternarSom()"
-            [attr.aria-label]="
-              (settings.som() ? 'menu.somLigado' : 'menu.somDesligado') | translate
-            "
-          >
-            {{ settings.som() ? '🔊' : '🔇' }}
-          </button>
-        </nav>
-      </header>
-
-      <!-- Lista vertical rolavel: a grade de bandeiras cortava itens em telas
-           menores, e so a bandeira nao identifica o idioma para o adulto. -->
-      @if (painel() === 'idioma') {
-        <div class="painel painel-lista" role="listbox">
-          @for (idioma of idiomas; track idioma) {
-            <button
-              type="button"
-              class="opcao-lista"
-              role="option"
-              [attr.aria-selected]="settings.idioma() === idioma"
-              [class.ativo]="settings.idioma() === idioma"
-              (click)="trocarIdioma(idioma)"
-            >
-              <span class="marca">{{ bandeiras[idioma] }}</span>
-              <span class="rotulo">{{ nomesIdioma[idioma] }}</span>
-              @if (settings.idioma() === idioma) {
-                <span class="tique" aria-hidden="true">✓</span>
-              }
-            </button>
-          }
-        </div>
-      }
-
-      <!-- Edicao do nome da crianca -->
-      @if (painel() === 'nome') {
-        <div class="painel painel-nome">
-          <input
-            class="campo-nome"
-            type="text"
-            [value]="rascunhoNome()"
-            (input)="rascunhoNome.set($any($event.target).value)"
-            (keyup.enter)="salvarNome()"
-            [placeholder]="'inicio.campoNome' | translate"
-            maxlength="20"
-            autocomplete="off"
-            autofocus
-          />
-          <button type="button" class="botao-salvar" (click)="salvarNome()">
-            {{ 'barreiraParental.confirmar' | translate }}
-          </button>
-        </div>
-      }
-
-      @if (painel() === 'background') {
-        <!-- Os 6 temas ficam disponiveis em qualquer idioma e qualquer epoca
-             do ano: a sazonalidade so define o padrao (BACKLOG 4B.5). -->
-        <div class="painel painel-lista" role="listbox">
-          @for (tema of temas(); track tema.chave) {
-            <button
-              type="button"
-              class="opcao-lista"
-              role="option"
-              [attr.aria-selected]="fundo.tema() === tema.chave"
-              [class.ativo]="fundo.tema() === tema.chave"
-              (click)="trocarTema(tema.chave)"
-            >
-              <img class="miniatura" [src]="assetDoTema(tema.chave)" alt="" />
-              <span class="rotulo">{{ rotuloTema(tema.chave) | translate }}</span>
-              @if (fundo.tema() === tema.chave) {
-                <span class="tique" aria-hidden="true">✓</span>
-              }
-            </button>
-          }
-        </div>
-      }
-
-      <!-- Fluxo de compra remove_ads (BACKLOG 6.7-6.12): a barreira parental
-           vem SEMPRE antes da loja — exigencia da Politica para Familias. -->
-      @if (painel() === 'compra') {
-        <div class="painel painel-compra">
-          @if (etapaCompra() === 'barreira') {
-            <h2 class="titulo-painel">{{ 'barreiraParental.titulo' | translate }}</h2>
-            <p class="texto-painel">
-              {{ 'barreiraParental.instrucao' | translate: { a: barreiraA(), b: barreiraB() } }}
-            </p>
-            @if (erroBarreira()) {
-              <p class="erro-painel">{{ 'barreiraParental.erro' | translate }}</p>
-            }
-            <input
-              class="campo-nome"
-              type="number"
-              inputmode="numeric"
-              [value]="respostaBarreira()"
-              (input)="respostaBarreira.set($any($event.target).value)"
-              (keyup.enter)="confirmarBarreira()"
-              autocomplete="off"
-              autofocus
-            />
-            <button type="button" class="botao-salvar" (click)="confirmarBarreira()">
-              {{ 'barreiraParental.confirmar' | translate }}
-            </button>
-            <button type="button" class="botao-cancelar" (click)="painel.set(null)">
-              {{ 'anuncios.cancelar' | translate }}
-            </button>
-          } @else {
-            <h2 class="titulo-painel">{{ 'anuncios.titulo' | translate }}</h2>
-            <p class="texto-painel">{{ 'anuncios.descricao' | translate }}</p>
-            @if (avisoCompra()) {
-              <p class="erro-painel">{{ 'anuncios.' + avisoCompra() | translate }}</p>
-            }
-            <button
-              type="button"
-              class="botao-salvar"
-              [disabled]="billing.processando()"
-              (click)="comprarRemocao()"
-            >
-              {{ 'anuncios.comprar' | translate }}
-              <!-- Preco SEMPRE vindo do Google Play (BACKLOG 6.8). -->
-              @if (billing.preco(); as preco) {
-                <span class="preco">{{ preco }}</span>
-              }
-            </button>
-            <button
-              type="button"
-              class="botao-restaurar"
-              [disabled]="billing.processando()"
-              (click)="restaurarCompra()"
-            >
-              {{ 'anuncios.restaurar' | translate }}
-            </button>
-            <button type="button" class="botao-cancelar" (click)="painel.set(null)">
-              {{ 'anuncios.cancelar' | translate }}
-            </button>
-          }
-        </div>
-      }
-
+    <!-- Cenario: caixa 2:3 que reproduz em CSS o MESMO enquadramento que o
+         `background-size: cover` aplica a arte. Animais e toque por pixel
+         vivem nas coordenadas da ARTE, nao nas da tela — um animal em y: 64%
+         cai sempre no mesmo ponto da clareira, em qualquer resolucao. -->
+    <div class="cenario" (pointerdown)="tocarNoPalco($event)">
       <!-- Os 5 animais (BACKLOG 4.2-4.5, 4.11-4.12, 4.15).
-           O toque e resolvido pelo palco, por pixel opaco (BACKLOG 4.4): aqui
-           os animais sao apenas imagens, sem area retangular propria. Cada um
-           mantem um botao invisivel so para leitores de tela. -->
+           O toque e resolvido pelo cenario, por pixel opaco (BACKLOG 4.4):
+           aqui os animais sao apenas imagens, sem area retangular propria.
+           Cada um mantem um botao invisivel so para leitores de tela. -->
       @for (animal of lista; track animal.chave) {
         <div
           class="animal"
@@ -215,12 +42,204 @@
           </button>
         }
       </div>
-
-    </div>
     </div>
 
-    <!-- Rodape ABAIXO do palco: a faixa fica imediatamente acima do banner e
-         nenhum dos dois cobre os animais (ESPECIFICATION 5, BACKLOG 5.3). -->
+    <!-- Barra superior (BACKLOG 4.6). Os fundos semitransparentes garantem
+         contraste tanto nos temas diurnos quanto nas cenas noturnas. -->
+    <header class="barra">
+      <!-- Tocar no cracha abre a edicao do nome. Sem nome salvo, ele
+           convida a preencher em vez de sumir. -->
+      <button
+        type="button"
+        class="cracha"
+        (click)="editarNome()"
+        [attr.aria-label]="'inicio.campoNome' | translate"
+      >
+        <span class="avatar" aria-hidden="true">🧒</span>
+        <span class="nome">{{ settings.nome() || ('inicio.campoNome' | translate) }}</span>
+        <span class="lapis" aria-hidden="true">✏️</span>
+      </button>
+
+      <nav class="acoes">
+        <button
+          type="button"
+          class="acao"
+          [class.ativo]="painel() === 'idioma'"
+          (click)="alternarPainel('idioma')"
+          [attr.aria-label]="'menu.idioma' | translate"
+        >
+          {{ bandeiras[settings.idioma()] }}
+        </button>
+
+        <button
+          type="button"
+          class="acao"
+          [class.ativo]="painel() === 'background'"
+          (click)="alternarPainel('background')"
+          [attr.aria-label]="'menu.background' | translate"
+        >
+          🖼️
+        </button>
+
+        <!-- Dois controles de audio SEPARADOS: a musica de fundo e os sons
+             dos animais desligam de forma independente. -->
+        <button
+          type="button"
+          class="acao"
+          [class.mudo]="!settings.musica()"
+          (click)="alternarMusica()"
+          [attr.aria-label]="
+            (settings.musica() ? 'menu.musicaLigada' : 'menu.musicaDesligada') | translate
+          "
+        >
+          <span aria-hidden="true">🎵</span>
+        </button>
+
+        <button
+          type="button"
+          class="acao"
+          [class.mudo]="!settings.som()"
+          (click)="alternarSom()"
+          [attr.aria-label]="
+            (settings.som() ? 'menu.somLigado' : 'menu.somDesligado') | translate
+          "
+        >
+          <span aria-hidden="true">🔊</span>
+        </button>
+      </nav>
+    </header>
+
+    <!-- Lista vertical rolavel: a grade de bandeiras cortava itens em telas
+         menores, e so a bandeira nao identifica o idioma para o adulto. -->
+    @if (painel() === 'idioma') {
+      <div class="painel painel-lista" role="listbox">
+        @for (idioma of idiomas; track idioma) {
+          <button
+            type="button"
+            class="opcao-lista"
+            role="option"
+            [attr.aria-selected]="settings.idioma() === idioma"
+            [class.ativo]="settings.idioma() === idioma"
+            (click)="trocarIdioma(idioma)"
+          >
+            <span class="marca">{{ bandeiras[idioma] }}</span>
+            <span class="rotulo">{{ nomesIdioma[idioma] }}</span>
+            @if (settings.idioma() === idioma) {
+              <span class="tique" aria-hidden="true">✓</span>
+            }
+          </button>
+        }
+      </div>
+    }
+
+    <!-- Edicao do nome da crianca -->
+    @if (painel() === 'nome') {
+      <div class="painel painel-nome">
+        <input
+          class="campo-nome"
+          type="text"
+          [value]="rascunhoNome()"
+          (input)="rascunhoNome.set($any($event.target).value)"
+          (keyup.enter)="salvarNome()"
+          [placeholder]="'inicio.campoNome' | translate"
+          maxlength="20"
+          autocomplete="off"
+          autofocus
+        />
+        <button type="button" class="botao-salvar" (click)="salvarNome()">
+          {{ 'barreiraParental.confirmar' | translate }}
+        </button>
+      </div>
+    }
+
+    @if (painel() === 'background') {
+      <!-- Os 6 temas ficam disponiveis em qualquer idioma e qualquer epoca
+           do ano: a sazonalidade so define o padrao (BACKLOG 4B.5). -->
+      <div class="painel painel-lista" role="listbox">
+        @for (tema of temas(); track tema.chave) {
+          <button
+            type="button"
+            class="opcao-lista"
+            role="option"
+            [attr.aria-selected]="fundo.tema() === tema.chave"
+            [class.ativo]="fundo.tema() === tema.chave"
+            (click)="trocarTema(tema.chave)"
+          >
+            <img class="miniatura" [src]="assetDoTema(tema.chave)" alt="" />
+            <span class="rotulo">{{ rotuloTema(tema.chave) | translate }}</span>
+            @if (fundo.tema() === tema.chave) {
+              <span class="tique" aria-hidden="true">✓</span>
+            }
+          </button>
+        }
+      </div>
+    }
+
+    <!-- Fluxo de compra remove_ads (BACKLOG 6.7-6.12): a barreira parental
+         vem SEMPRE antes da loja — exigencia da Politica para Familias. -->
+    @if (painel() === 'compra') {
+      <div class="painel painel-compra">
+        @if (etapaCompra() === 'barreira') {
+          <h2 class="titulo-painel">{{ 'barreiraParental.titulo' | translate }}</h2>
+          <p class="texto-painel">
+            {{ 'barreiraParental.instrucao' | translate: { a: barreiraA(), b: barreiraB() } }}
+          </p>
+          @if (erroBarreira()) {
+            <p class="erro-painel">{{ 'barreiraParental.erro' | translate }}</p>
+          }
+          <input
+            class="campo-nome"
+            type="number"
+            inputmode="numeric"
+            [value]="respostaBarreira()"
+            (input)="respostaBarreira.set($any($event.target).value)"
+            (keyup.enter)="confirmarBarreira()"
+            autocomplete="off"
+            autofocus
+          />
+          <button type="button" class="botao-salvar" (click)="confirmarBarreira()">
+            {{ 'barreiraParental.confirmar' | translate }}
+          </button>
+          <button type="button" class="botao-cancelar" (click)="painel.set(null)">
+            {{ 'anuncios.cancelar' | translate }}
+          </button>
+        } @else {
+          <h2 class="titulo-painel">{{ 'anuncios.titulo' | translate }}</h2>
+          <p class="texto-painel">{{ 'anuncios.descricao' | translate }}</p>
+          @if (avisoCompra()) {
+            <p class="erro-painel">{{ 'anuncios.' + avisoCompra() | translate }}</p>
+          }
+          <button
+            type="button"
+            class="botao-salvar"
+            [disabled]="billing.processando()"
+            (click)="comprarRemocao()"
+          >
+            {{ 'anuncios.comprar' | translate }}
+            <!-- Preco SEMPRE vindo do Google Play (BACKLOG 6.8). -->
+            @if (billing.preco(); as preco) {
+              <span class="preco">{{ preco }}</span>
+            }
+          </button>
+          <button
+            type="button"
+            class="botao-restaurar"
+            [disabled]="billing.processando()"
+            (click)="restaurarCompra()"
+          >
+            {{ 'anuncios.restaurar' | translate }}
+          </button>
+          <button type="button" class="botao-cancelar" (click)="painel.set(null)">
+            {{ 'anuncios.cancelar' | translate }}
+          </button>
+        }
+      </div>
+    }
+
+    <!-- Rodape SOBRE a base do cenario (padrao FarmBook): faixa do nome,
+         faixa escura com o botao + links legais, e a area do banner.
+         A faixa e o banner NUNCA cobrem os animais: a zona util da arte
+         termina acima deles (ESPECIFICATION 5, BACKLOG 5.3). -->
     <footer class="rodape">
       <app-faixa-nome [animal]="animalNaFaixa()" />
 
@@ -245,9 +264,10 @@
       </div>
 
       @if (!settings.semAnuncios()) {
-        <!-- Espaco reservado para o banner NATIVO, que o AdMob desenha por
-             cima do WebView. Sem rede a altura fica 0 e o layout recolhe
-             sozinho, sem buraco (BACKLOG 4.9, 6.5). -->
+        <!-- Area do anuncio: espaco reservado para o banner NATIVO, que o
+             AdMob desenha por cima do WebView. O fundo escurecido marca a
+             area enquanto o anuncio carrega; sem rede a altura fica 0 e o
+             layout recolhe sozinho, sem buraco (BACKLOG 4.9, 6.5). -->
         <div class="banner" aria-hidden="true" [style.height.px]="ads.alturaBanner()"></div>
       }
     </footer>

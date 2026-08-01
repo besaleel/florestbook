@@ -33,8 +33,10 @@
     "idioma": "Idioma",
     "background": "Cenário",
     "som": "Som",
-    "somLigado": "Som ligado",
-    "somDesligado": "Som desligado"
+    "somLigado": "Sons dos animais ligados",
+    "somDesligado": "Sons dos animais desligados",
+    "musicaLigada": "Música ligada",
+    "musicaDesligada": "Música desligada"
   },
   "anuncios": {
     "remover": "Remover Anúncio",

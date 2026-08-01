@@ -33,10 +33,14 @@ const BLOCO_PRODUCAO = 'ca-app-pub-3480885465464323/8466632581';
  *
  * ## Teste x producao
  *
- * A decisao esta concentrada em `producao()`: builds de DEBUG usam o bloco de
- * teste e builds de RELEASE usam o de producao. Assim o teste em aparelho e
- * seguro (clicar no anuncio de teste nao e fraude) e o AAB publicado ja sai
- * monetizando, sem depender de alguem lembrar de trocar uma constante.
+ * A decisao esta concentrada em `producao()`: QUALQUER build rodando em
+ * aparelho usa o bloco de PRODUCAO — decisao de 01/08/2026, para validar o
+ * resultado real (area do banner, altura, preenchimento) no celular de testes
+ * antes de publicar. O bloco de teste do Google fica reservado ao navegador.
+ *
+ * ⚠️ Consequencia: NUNCA clicar em anuncio no aparelho, nem em build de
+ * debug — o Google trata clique do desenvolvedor como fraude e suspende a
+ * conta AdMob. Ver o anuncio na tela e seguro; o clique nao e.
  *
  * O App ID (`ca-app-pub-3480885465464323~9513221026`) e sempre o de producao e
  * fica no AndroidManifest — so o BLOCO alterna.
@@ -51,14 +55,12 @@ export class AdsService {
   private iniciado = false;
 
   /**
-   * `true` em build de release num aparelho real.
-   *
-   * `ngDevMode` e removido pelo compilador em producao, entao esta condicao e
-   * resolvida em tempo de build — nao ha risco de o bloco de producao vazar
-   * para um build de debug.
+   * `true` em QUALQUER aparelho real (debug ou release): o bloco de producao
+   * vale para todo build nativo, para o teste em aparelho mostrar o banner
+   * real. No navegador (`ionic serve`) segue o bloco de teste do Google.
    */
   private producao(): boolean {
-    return Capacitor.isNativePlatform() && !ngDevMode;
+    return Capacitor.isNativePlatform();
   }
 
   private get bloco(): string {

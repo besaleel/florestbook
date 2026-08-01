@@ -151,17 +151,18 @@ npx cap sync android
 Isso gera `APK/www` (build otimizado) e copia para
 `APK/android/app/src/main/assets/public`.
 
-> ### IDs do AdMob — a troca é automática
+> ### IDs do AdMob — produção em QUALQUER build nativo
 >
-> Não há constante para trocar à mão. O método `producao()` de
+> Desde 01/08/2026 (v03), o método `producao()` de
 > `APK/src/app/core/services/ads.service.ts` retorna
-> `Capacitor.isNativePlatform() && !ngDevMode`, e o compilador resolve
-> `ngDevMode` em tempo de build:
+> `Capacitor.isNativePlatform()`: **todo build instalado em aparelho (debug ou
+> release) usa o bloco de produção**, para o teste no celular mostrar o banner
+> real. O bloco de teste do Google fica reservado ao navegador (`ionic serve`).
 >
-> | Build | Bloco usado | Clicar no anúncio |
-> |-------|-------------|-------------------|
-> | `assembleDebug` | teste (`…3940256099942544/6300978111`) | seguro |
-> | `bundleRelease` | **produção** (`…3480885465464323/8466632581`) | **nunca** |
+> | Onde roda | Bloco usado | Clicar no anúncio |
+> |-----------|-------------|-------------------|
+> | Navegador (`ionic serve`) | teste (`…3940256099942544/6300978111`) | seguro |
+> | Aparelho — **qualquer build** | **produção** (`…3480885465464323/8466632581`) | **NUNCA** |
 >
 > Para conferir num bundle já gerado — o código sai minificado, então procure
 > em todos os chunks, não só no `main`:
@@ -170,11 +171,10 @@ Isso gera `APK/www` (build otimizado) e copia para
 >   Select-String -Pattern "3480885465464323/8466632581" -SimpleMatch |
 >   Select-Object -ExpandProperty Filename
 > ```
-> No release, `producao()` compila para `isNativePlatform()&&!0` — sempre
-> verdadeiro em aparelho.
 >
-> ⚠️ **Nunca clique nos próprios anúncios em build de release.** O Google
-> trata clique do desenvolvedor como fraude e suspende a conta AdMob.
+> ⚠️ **Nunca clique nos próprios anúncios em aparelho — nem em build de
+> debug.** O Google trata clique do desenvolvedor como fraude e suspende a
+> conta AdMob. Ver o anúncio na tela é seguro; o clique não é.
 
 ## 5. Gerar o AAB assinado
 
@@ -234,6 +234,7 @@ Copy-Item "C:\Sistemas\FLORESTBOOK\APK\android\app\build\outputs\bundle\release\
 |---------|-------------|-------------|-------------|
 | `florestbook-release-v01.aab` | 1 | 1.0.0 | Primeiro release. 12,62 MB. Assinado com `florestbook-release.jks` (SHA-256 `12:4B:66:40:…:F7:31`, conferido contra o APK). R8 + `shrinkResources` ativos. AdMob no bloco de **produção**. |
 | `florestbook-release-v02.aab` | 2 | 1.1.0 | 13,40 MB. **Google Play Billing** integrado (`@capgo/native-purchases`, Billing Library 8.3.0) — permissão `com.android.vending.BILLING` conferida no manifest mesclado; é o build que habilita cadastrar o produto `remove_ads` na Play Console. Tela inicial no padrão FarmBook, backgrounds novos + tema `thanksgiven`, correção do banner achatado em telas 16:9. Sem aviso de keystore no Gradle (chave de release). |
+| `florestbook-release-v03.aab` | 3 | 1.2.0 | 13,40 MB. Tela da floresta no **padrão FarmBook**: cenário cobre a tela inteira (`cover` + caixa 2:3 sangrando nas bordas), rodapé sobreposto com faixa de sílabas, faixa escura "Remover Anúncio" + links legais e área do banner com fundo escurecido. **Dois controles de áudio separados** (🎵 música / 🔊 sons dos animais), persistidos de forma independente. AdMob passa a usar o **bloco de produção em qualquer build nativo** (nunca clicar no anúncio no aparelho). Sem aviso de keystore no Gradle (chave de release). |
 
 ---
 

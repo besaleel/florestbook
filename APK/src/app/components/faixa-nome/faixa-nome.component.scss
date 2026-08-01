@@ -1,12 +1,15 @@
 // Faixa do nome do animal (ESPECIFICATION 4.2, BACKLOG 5.1-5.4).
 
 :host {
-  // Altura FIXA, reservada mesmo com a faixa escondida: sem isso o palco
+  // Altura FIXA, reservada mesmo com a faixa escondida: sem isso o rodape
   // subiria e desceria a cada toque, deslocando os animais sob o dedo da
   // crianca. `flex-shrink: 0` impede o rodape de espremer o espaco.
   display: block;
   flex: 0 0 auto;
   height: clamp(72px, 20vw, 108px);
+  // A faixa flutua SOBRE o cenario (padrao FarmBook): enquanto escondida, o
+  // toque atravessa a area reservada e alcanca os animais atras dela.
+  pointer-events: none;
 }
 
 .faixa {

@@ -244,11 +244,17 @@ export class FlorestaPage implements OnInit {
     this.painel.set(null);
   }
 
+  /** Sons dos animais — independente da musica de fundo. */
   protected async alternarSom(): Promise<void> {
-    const ligado = !this.settings.som();
-    await this.settings.definirSom(ligado);
-    // Ligar o som e um gesto do usuario: aproveita para liberar o autoplay.
-    if (ligado) await this.audio.liberarComGesto();
+    await this.settings.definirSom(!this.settings.som());
+  }
+
+  /** Musica de fundo — independente dos sons dos animais. */
+  protected async alternarMusica(): Promise<void> {
+    const ligada = !this.settings.musica();
+    await this.settings.definirMusica(ligada);
+    // Ligar a musica e um gesto do usuario: aproveita para liberar o autoplay.
+    if (ligada) await this.audio.liberarComGesto();
   }
 
   /**
