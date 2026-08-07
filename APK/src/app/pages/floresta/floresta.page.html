@@ -19,19 +19,24 @@
            O toque e resolvido pelo cenario, por pixel opaco (BACKLOG 4.4):
            aqui os animais sao apenas imagens, sem area retangular propria.
            Cada um mantem um botao invisivel so para leitores de tela. -->
-      @for (animal of lista; track animal.chave) {
-        <div
-          class="animal"
-          [class]="'idle-' + animal.chave"
-          [class.reagindo]="reagindo() === animal.chave"
-          [style.left.%]="animal.x"
-          [style.top.%]="animal.y"
-          [style.width.%]="animal.largura"
-          [style.z-index]="camada(animal)"
-        >
-          <img [src]="imagem(animal)" [alt]="'animais.' + animal.chave | translate" />
-        </div>
-      }
+      <!-- Os animais vivem na FAIXA, nao no cenario inteiro: o cenario sangra
+           para fora da tela nos aparelhos estreitos e levava leao e elefante
+           junto (corte visto no LG e no Xiaomi). Ver `.faixa-animais`. -->
+      <div class="faixa-animais">
+        @for (animal of lista; track animal.chave) {
+          <div
+            class="animal"
+            [class]="'idle-' + animal.chave"
+            [class.reagindo]="reagindo() === animal.chave"
+            [style.left.%]="animal.x"
+            [style.top.%]="animal.y"
+            [style.width.%]="animal.largura"
+            [style.z-index]="camada(animal)"
+          >
+            <img [src]="imagem(animal)" [alt]="'animais.' + animal.chave | translate" />
+          </div>
+        }
+      </div>
 
       <!-- Acessibilidade: alvos nomeados para leitor de tela, fora do fluxo
            visual. O jogo em si e operado pelo toque direto na arte. -->
@@ -237,7 +242,7 @@
     }
 
     <!-- Rodape SOBRE a base do cenario (padrao FarmBook): faixa do nome,
-         faixa escura com o botao + links legais, e a area do banner.
+         faixa escura com o botao "Remover Anuncio", e a area do banner.
          A faixa e o banner NUNCA cobrem os animais: a zona util da arte
          termina acima deles (ESPECIFICATION 5, BACKLOG 5.3). -->
     <footer class="rodape">
@@ -250,17 +255,11 @@
           </button>
         }
 
-        <!-- Links legais exigidos pela Politica para Familias: abrem no
-             navegador do sistema, fora do app (BACKLOG 7.5). -->
-        <nav class="legais">
-          <button type="button" (click)="abrirDocumento('termos')">
-            {{ 'legal.termos' | translate }}
-          </button>
-          <span aria-hidden="true">·</span>
-          <button type="button" (click)="abrirDocumento('privacidade')">
-            {{ 'legal.privacidade' | translate }}
-          </button>
-        </nav>
+        <!-- Os links legais NAO ficam aqui: poluiam a cena do jogo, que e a
+             tela da crianca (teste em aparelho de 01/08/2026). A exigencia da
+             Politica para Familias continua atendida pela TELA INICIAL, que e
+             a porta de entrada do adulto e mantem os dois links no rodape
+             (inicio.page.html, BACKLOG 7.5). -->
       </div>
 
       @if (!settings.semAnuncios()) {
@@ -268,7 +267,13 @@
              AdMob desenha por cima do WebView. O fundo escurecido marca a
              area enquanto o anuncio carrega; sem rede a altura fica 0 e o
              layout recolhe sozinho, sem buraco (BACKLOG 4.9, 6.5). -->
-        <div class="banner" aria-hidden="true" [style.height.px]="ads.alturaBanner()"></div>
+        <div
+          class="banner"
+          [class.previa]="ads.mostrandoPrevia()"
+          aria-hidden="true"
+          [style.height.px]="ads.alturaReservada()"
+        >
+        </div>
       }
     </footer>
   </div>

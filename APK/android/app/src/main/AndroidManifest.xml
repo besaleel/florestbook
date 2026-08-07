@@ -52,4 +52,13 @@
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Exigida pelo Google Mobile Ads SDK 20.4.0+ para servir banner no
+         Android 13+ (API 33). SEM ela o SDK inicializa, o `showBanner` nao
+         lanca erro e mesmo assim NENHUM anuncio e preenchido — foi a causa do
+         banner vazio no teste em aparelho de 01/08/2026 (Xiaomi e LG).
+         Declarar a permissao NAO conflita com a Politica para Familias: o
+         `tagForChildDirectedTreatment` continua impedindo o SDK de usar o
+         identificador para personalizacao (ver AdsService). -->
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
 </manifest>

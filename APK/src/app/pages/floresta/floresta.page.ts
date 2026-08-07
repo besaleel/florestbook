@@ -22,7 +22,6 @@ import { HitTestService } from '../../core/services/hit-test.service';
 import { Idioma, IDIOMAS, SettingsService } from '../../core/services/settings.service';
 import { I18nService } from '../../core/services/i18n.service';
 import { FaixaNomeComponent } from '../../components/faixa-nome/faixa-nome.component';
-import { abrirDocumentoLegal } from '../../core/legal';
 
 /**
  * Duracao da faixa do nome: 4,5 s para TODOS os animais (ESPECIFICATION 3.4).
@@ -156,15 +155,20 @@ export class FlorestaPage implements OnInit {
     // palco so responde por toques que nao vieram de um controle.
     if ((evento.target as HTMLElement).closest('button, .painel, .rodape')) return;
 
-    const palco = (evento.currentTarget as HTMLElement).getBoundingClientRect();
-    if (!palco.width || !palco.height) return;
+    // As coordenadas dos animais sao % da FAIXA, nao do cenario inteiro
+    // (`.faixa-animais` no SCSS): medir no cenario deslocaria o hit-test da
+    // arte nos aparelhos estreitos, onde a faixa e mais estreita que ele.
+    const faixa = (evento.currentTarget as HTMLElement)
+      .querySelector('.faixa-animais')
+      ?.getBoundingClientRect();
+    if (!faixa?.width || !faixa.height) return;
 
-    // Posicao do toque em % do palco.
-    const px = ((evento.clientX - palco.left) / palco.width) * 100;
-    const py = ((evento.clientY - palco.top) / palco.height) * 100;
+    // Posicao do toque em % da faixa.
+    const px = ((evento.clientX - faixa.left) / faixa.width) * 100;
+    const py = ((evento.clientY - faixa.top) / faixa.height) * 100;
 
-    // Como o asset e 1024x1536 e o palco tem a mesma proporcao, a altura do
-    // animal em % da ALTURA do palco e igual a sua largura em % da LARGURA.
+    // Como o asset e 1024x1536 e a faixa tem a mesma proporcao, a altura do
+    // animal em % da ALTURA da faixa e igual a sua largura em % da LARGURA.
     const candidatos = [...this.lista].sort(
       (a, b) => this.camada(b) - this.camada(a),
     );
@@ -222,15 +226,6 @@ export class FlorestaPage implements OnInit {
   protected async salvarNome(): Promise<void> {
     await this.settings.definirNome(this.rascunhoNome());
     this.painel.set(null);
-  }
-
-  /**
-   * Abre um documento legal no navegador do sistema, nunca dentro do app.
-   * A Politica para Familias exige que links externos saiam do contexto
-   * infantil (ESPECIFICATION 6.1, BACKLOG 7.5).
-   */
-  protected async abrirDocumento(qual: 'termos' | 'privacidade'): Promise<void> {
-    await abrirDocumentoLegal(qual);
   }
 
   protected async trocarIdioma(idioma: Idioma): Promise<void> {

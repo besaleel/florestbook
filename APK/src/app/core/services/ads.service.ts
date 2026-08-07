@@ -1,4 +1,4 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import {
   AdMob,
@@ -7,6 +7,7 @@ import {
   BannerAdPosition,
   BannerAdSize,
   AdMobBannerSize,
+  MaxAdContentRating,
 } from '@capacitor-community/admob';
 
 import { SettingsService } from './settings.service';
@@ -17,8 +18,17 @@ import { SettingsService } from './settings.service';
  */
 const BLOCO_TESTE = 'ca-app-pub-3940256099942544/6300978111';
 
-/** Bloco de PRODUCAO do Florest Book. Nunca clicar. */
-const BLOCO_PRODUCAO = 'ca-app-pub-3480885465464323/8466632581';
+/**
+ * Bloco de PRODUCAO do Florest Book, formato BANNER. Nunca clicar.
+ *
+ * O bloco anterior (`.../8466632581`) era do formato "Nativo avancado" e por
+ * isso NUNCA preenchia: o app pede `showBanner()`, e um bloco nativo nao
+ * responde a um pedido de banner — sem erro, so sem anuncio. Foi a causa do
+ * rodape vazio nos testes de 01/08/2026. Formato do bloco e formato do pedido
+ * precisam bater; se um dia o rodape voltar a ficar vazio, conferir isto
+ * ANTES de mexer no resto.
+ */
+const BLOCO_PRODUCAO = 'ca-app-pub-3480885465464323/2258417075';
 
 /**
  * Anuncios (ESPECIFICATION 6.1, BACKLOG 6.1-6.5, 6.13).
@@ -52,6 +62,39 @@ export class AdsService {
   /** Altura do banner em px, para o layout reservar espaco exato. */
   readonly alturaBanner = signal(0);
 
+  /**
+   * PREVIA DE LAYOUT (temporaria, 01/08/2026).
+   *
+   * Enquanto o bloco de banner novo nao comeca a servir, o espaco do anuncio
+   * fica com altura 0 e nao da para julgar o enquadramento final da tela.
+   * Com isto ligado, uma faixa clara ocupa a altura REAL de um banner
+   * adaptativo, mostrando como a tela vai ficar com o anuncio no lugar.
+   *
+   * ⚠️ Voltar para `false` antes de publicar: em producao o espaco deve
+   * aparecer somente quando existe anuncio de verdade (BACKLOG 6.5).
+   * Desligada na 1.2.1 justamente por isso — so religar em teste local.
+   */
+  readonly previaDeLayout = signal(false);
+
+  /** Altura tipica de um banner adaptativo em celular (dp ~= px em mdpi). */
+  private readonly ALTURA_PREVIA = 60;
+
+  /**
+   * Altura que o layout deve reservar: a do anuncio real ou, na previa, a
+   * altura simulada. Um banner real que chegue durante a previa tem
+   * precedencia — nunca queremos a faixa falsa por cima do anuncio.
+   */
+  readonly alturaReservada = computed(() => {
+    const real = this.alturaBanner();
+    if (real > 0) return real;
+    return this.previaDeLayout() ? this.ALTURA_PREVIA : 0;
+  });
+
+  /** `true` so quando a faixa mostrada e a simulada, nao um anuncio real. */
+  readonly mostrandoPrevia = computed(
+    () => this.previaDeLayout() && this.alturaBanner() === 0,
+  );
+
   private iniciado = false;
 
   /**
@@ -76,8 +119,18 @@ export class AdsService {
     if (this.settings.semAnuncios()) return;
 
     try {
+      // As tres exigencias da Politica para Familias vao AQUI, na
+      // inicializacao do SDK — nao basta o `npa` do banner. Sem o
+      // `tagForChildDirectedTreatment` o SDK pede inventario que nao pode ser
+      // servido a um app dirigido a criancas e a resposta volta sem
+      // preenchimento: banner vazio, sem erro. Junto com a permissao AD_ID
+      // ausente no manifesto, foi o que deixou o rodape em branco no teste em
+      // aparelho de 01/08/2026.
       await AdMob.initialize({
         initializeForTesting: !this.producao(),
+        tagForChildDirectedTreatment: true,
+        tagForUnderAgeOfConsent: true,
+        maxAdContentRating: MaxAdContentRating.General,
       });
 
       // O layout so reserva o espaco quando o banner REALMENTE carrega: assim
@@ -88,6 +141,13 @@ export class AdsService {
       );
       await AdMob.addListener(BannerAdPluginEvents.FailedToLoad, () =>
         this.alturaBanner.set(0),
+      );
+
+      // Anuncio de verdade na tela: a previa de layout sai de cena. Enquanto
+      // o bloco novo nao servir, este evento nao chega e a faixa simulada
+      // continua ali, que e justamente o que se quer conferir.
+      await AdMob.addListener(BannerAdPluginEvents.Loaded, () =>
+        this.previaDeLayout.set(false),
       );
 
       this.iniciado = true;

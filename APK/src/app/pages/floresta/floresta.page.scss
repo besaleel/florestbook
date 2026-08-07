@@ -51,6 +51,36 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+/**
+ * Faixa dos animais: a correcao real do corte nas bordas (01/08/2026).
+ *
+ * O `.cenario` reproduz o `cover` e por isso e MAIS LARGO que a tela nos
+ * aparelhos altos e estreitos — 520 px de cenario para 360 px de tela no LG.
+ * Como as posicoes dos animais sao % do CENARIO, `x: 74%` caia FORA da tela:
+ * era o elefante cortado. Reduzir os percentuais nao resolve, porque a sobra
+ * lateral muda com a proporcao de cada aparelho.
+ *
+ * Esta caixa ancora os animais na largura VISIVEL (`100cqw`), mantendo a
+ * proporcao 2:3 da arte para o hit-test por pixel continuar valendo — a conta
+ * u/v assume "altura em % da altura = largura em % da largura", entao a caixa
+ * precisa ser 2:3 como o asset. Fica centrada e alinhada pela BASE da area
+ * util, que e onde os animais pisam.
+ */
+.faixa-animais {
+  position: absolute;
+  // Centrada na tela, nao ancorada na base: presa ao rodape a turma descia e
+  // sobrava uma clareira vazia enorme em cima (visto na validacao).
+  // Os 4% a mais compensam o fato de os animais ocuparem a METADE DE BAIXO da
+  // faixa (y medio ~60%): sem isso a turma sobe demais e sobra chao vazio.
+  top: 54%;
+  left: 50%;
+  // Nunca passa da tela; nos aparelhos largos nao estica alem do cenario.
+  width: min(100cqw, 100%);
+  // 2:3 da propria largura: preserva a geometria que o hit-test assume.
+  height: calc(min(100cqw, 100%) * (1536 / 1024));
+  transform: translate(-50%, -50%);
+}
+
 // --- Barra superior (BACKLOG 4.6, 4.7) ---
 
 .barra {
@@ -481,36 +511,28 @@
   font-weight: 700;
 }
 
-// Links legais: discretos o bastante para nao competir com o jogo, mas
-// sempre visiveis — a Politica para Familias exige acesso facil.
-.legais {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  color: rgb(255 255 255 / 75%);
-  font-size: clamp(0.65rem, 2.8vw, 0.78rem);
-
-  button {
-    padding: 0.2rem 0.15rem;
-    border: none;
-    background: none;
-    color: inherit;
-    font-size: inherit;
-    text-decoration: underline;
-    text-shadow: 0 1px 3px rgb(0 0 0 / 80%);
-  }
-}
+// Os links legais sairam desta tela (ficaram so na inicial): o estilo
+// `.legais` correspondente foi removido junto.
 
 .banner {
   // Area do anuncio, 100% da largura (BACKLOG 4.9). O fundo escurecido marca
   // o espaco enquanto o AdMob desenha o banner nativo por cima do WebView.
   // Sem anuncio disponivel a altura vai a zero e o layout nao quebra.
   // NUNCA encolhe: o anuncio nativo e desenhado por cima com a altura real,
-  // e um espaco menor faria ele cobrir os links legais.
+  // e um espaco menor faria ele cobrir o botao "Remover Anuncio".
   flex-shrink: 0;
   width: 100%;
   height: 0;
   background: rgb(0 0 0 / 35%);
+
+  // Faixa de PREVIA (temporaria): branca, para simular o bloco de anuncio e
+  // permitir julgar o enquadramento da tela antes de o bloco servir.
+  // Sai junto com `previaDeLayout` no AdsService.
+  &.previa {
+    display: grid;
+    place-items: center;
+    background: rgb(255 255 255 / 92%);
+  }
 }
 
 // Acessibilidade: reduz o movimento sem tirar o retorno ao toque
