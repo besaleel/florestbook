@@ -53,6 +53,11 @@
     "erro": "Falsche Antwort. Bitte versuche es erneut.",
     "confirmar": "Bestätigen"
   },
+  "promo": {
+    "selo": "Werbung",
+    "chamada": "Entdecke die Bauernhoftiere!",
+    "abrir": "{{app}} bei Google Play öffnen"
+  },
   "legal": {
     "termos": "Nutzungsbedingungen",
     "privacidade": "Datenschutzerklärung"

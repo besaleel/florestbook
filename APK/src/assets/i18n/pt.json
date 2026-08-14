@@ -53,6 +53,11 @@
     "erro": "Resposta incorreta. Tente novamente.",
     "confirmar": "Confirmar"
   },
+  "promo": {
+    "selo": "Publicidade",
+    "chamada": "Conheça os animais da fazenda!",
+    "abrir": "Abrir {{app}} na Google Play"
+  },
   "legal": {
     "termos": "Termo de Uso",
     "privacidade": "Política de Privacidade"

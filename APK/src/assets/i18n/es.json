@@ -53,6 +53,11 @@
     "erro": "Respuesta incorrecta. Inténtalo de nuevo.",
     "confirmar": "Confirmar"
   },
+  "promo": {
+    "selo": "Publicidad",
+    "chamada": "¡Conoce los animales de la granja!",
+    "abrir": "Abrir {{app}} en Google Play"
+  },
   "legal": {
     "termos": "Términos de uso",
     "privacidade": "Política de privacidad"

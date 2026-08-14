@@ -56,9 +56,17 @@ const SONS_IGNORADOS = new Set([
  */
 const CORRECOES_DE_GRAFIA = new Map([['backgroung-natal', 'background-natal']]);
 
+/**
+ * Icones quadrados de outros jogos da familia, usados na divulgacao cruzada
+ * da tela inicial (BACKLOG 8.6). Entram no build so por estarem nesta lista.
+ */
+const ICONES_CRUZADOS = ['farmbook'];
+
 const QUALIDADE_WEBP = 85;
 const DIM_ANIMAL = { width: 512, height: 768 };
 const DIM_BACKGROUND = { width: 1080, height: 1620 };
+// O icone aparece com ~72 px de lado; 256 cobre telas 3x com folga.
+const DIM_ICONE_CRUZADO = { width: 256, height: 256 };
 
 const kb = (bytes) => `${(bytes / 1024).toFixed(0)} KB`;
 
@@ -137,20 +145,28 @@ async function processarImagens() {
     if (base === 'logo') continue;
 
     const ehAnimal = ANIMAIS.includes(base);
+    const ehIconeCruzado = ICONES_CRUZADOS.includes(base);
     const nomeCorrigido = CORRECOES_DE_GRAFIA.get(base) ?? base;
     const ehBackground = nomeCorrigido === 'background' || nomeCorrigido.startsWith('background-');
 
-    if (!ehAnimal && !ehBackground) {
+    if (!ehAnimal && !ehBackground && !ehIconeCruzado) {
       console.log(`  ignorado    ${arquivo}  (fora dos padroes de nome)`);
       continue;
     }
 
+    const dimensao = ehAnimal
+      ? DIM_ANIMAL
+      : ehIconeCruzado
+        ? DIM_ICONE_CRUZADO
+        : DIM_BACKGROUND;
+
     const destino = path.join(DESTINO_IMAGENS, `${nomeCorrigido}.webp`);
-    const peso = await paraWebp(origem, destino, ehAnimal ? DIM_ANIMAL : DIM_BACKGROUND);
+    const peso = await paraWebp(origem, destino, dimensao);
     total += peso;
 
+    const tipo = ehAnimal ? 'animal ' : ehIconeCruzado ? 'icone  ' : 'fundo  ';
     const rotulo = nomeCorrigido === base ? '' : `  (renomeado de "${base}")`;
-    console.log(`  ${ehAnimal ? 'animal ' : 'fundo  '}     ${nomeCorrigido}.webp  ${kb(peso)}${rotulo}`);
+    console.log(`  ${tipo}     ${nomeCorrigido}.webp  ${kb(peso)}${rotulo}`);
 
     if (ehBackground) {
       const chave = nomeCorrigido === 'background' ? 'standard' : nomeCorrigido.replace('background-', '');

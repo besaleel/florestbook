@@ -358,6 +358,32 @@ Regras completas em ESPECIFICATION § 4.3. Depende de 2.3 (`SettingsService`).
       isoladas de ads e billing)
 - [ ] **8.5** Novos temas de background — a arquitetura da Fase 4B aceita novos
       temas apenas somando uma entrada ao registro
+- [x] **8.6** **Divulgação cruzada do FarmBook** na tela inicial, abaixo do
+      COMEÇAR: cartão com ícone, nome e chamada, selo "Publicidade" visível e
+      **barreira parental** antes de abrir a ficha na Play Store
+      (`play.google.com/store/apps/details?id=com.farmbook.app`) — a Política
+      para Famílias exige as duas coisas para links que saem do app.
+      Ícone embarcado pelo pipeline (`farmbook.webp`, 22 KB); textos nos 6
+      idiomas em `promo.*`. Layout conferido por screenshot em 412×915 e
+      360×640 (esta última exigiu a regra `max-height: 700px`)
+- [x] **8.7** **A compra `remove_ads` também remove a divulgação cruzada** — o
+      banner do 8.6 é publicidade (exibe o próprio selo), então some com a
+      compra, junto com o banner AdMob. A tela inicial passou a chamar
+      `billing.iniciar()` para cobrir a REINSTALAÇÃO: o disco vem limpo, mas a
+      compra existe na conta Google e sem essa consulta o banner apareceria até
+      a primeira visita à floresta. Conferido nos dois estados por screenshot
+- [x] **8.8** **Termo de Uso e Política de Privacidade revisados** para a
+      Play Store: identificação do desenvolvedor, faixa etária, lei aplicável e
+      foro, rescisão/vigência, link para a política de reembolso do Google e as
+      novas seções de divulgação cruzada e links externos. `DEPLOY/` e `docs/`
+      sincronizados
+- [x] **8.9** **URLs legais migradas para o domínio próprio** (14/08/2026):
+      `https://bza.tec.br/florestbook-termos-de-uso` e
+      `https://bza.tec.br/florestbook-politica-privacidade`, literais em
+      `core/legal.ts` (sem extensão — o servidor abstrai). Os links CRUZADOS
+      entre os dois documentos viraram **absolutos**: relativos resolveriam
+      para `/politica-privacidade.html`, que dá 404 nesse padrão de URL.
+      Conferido dentro do AAB que não sobrou referência ao GitHub Pages
 
 ---
 
@@ -389,6 +415,23 @@ HTTP 200 (item 7.4) continua com você:** o ambiente onde o código foi
 desenvolvido não tem saída HTTP para validar as URLs de fora. Abra os três
 links antes de submeter à Play Console, que valida o link da política.
 
+### Domínio próprio (14/08/2026) — substitui as URLs acima
+
+Os documentos passaram para **`bza.tec.br`**, e são estes os endereços
+oficiais, embutidos no app e a serem informados na Play Console:
+
+| Documento | URL |
+|-----------|-----|
+| Termo de Uso | `https://bza.tec.br/florestbook-termos-de-uso` |
+| Política de Privacidade | `https://bza.tec.br/florestbook-politica-privacidade` |
+
+O conteúdo continua sendo gerado de `DEPLOY/*.html`; os links cruzados entre os
+dois documentos viraram **absolutos**, porque o padrão de URL sem extensão
+quebraria os relativos (`politica-privacidade.html` resolveria para a raiz do
+domínio). O GitHub Pages segue no ar como espelho, mas não é mais o oficial.
+A verificação de HTTP 200 continua sendo sua — o ambiente de desenvolvimento
+não tem saída HTTP.
+
 ## Teste em aparelho real — correções (31/07/2026)
 
 Pontos levantados por você no primeiro teste em aparelho, e o que foi feito:
@@ -407,6 +450,23 @@ Pontos levantados por você no primeiro teste em aparelho, e o que foi feito:
 > 31/07/2026** (itens 6.6–6.12, AAB v02). A ordem correta ficou: subir o v02 na
 > Play Console → cadastrar o produto `remove_ads` (só libera com o BILLING no
 > manifest, e o v02 já tem) → testar a compra em aparelho real (item 6.14).
+
+## Entrega de 14/08/2026 — divulgação cruzada + domínio próprio (v05 / 1.3.0)
+
+| O que | Situação |
+|-------|----------|
+| **Banner do FarmBook** na tela inicial, abaixo do COMEÇAR (item 8.6) | ✅ Screenshot em 412×915 e 360×640 |
+| **A compra `remove_ads` também remove o banner** (item 8.7) | ✅ Conferido nos dois estados |
+| **URLs legais em `bza.tec.br`** (item 8.9) | ✅ Conferido dentro do AAB: nenhum resquício do GitHub Pages |
+| **Termo de Uso e Política revisados** para a Play Store (item 8.8) | ✅ Desenvolvedor: **Besaleel Vieira** |
+| **AAB v05** (`versionCode` 5, `versionName` 1.3.0, 13,42 MB, assinado) | ✅ Publicado na Play Console em 14/08/2026 |
+| Lint, build e testes | ✅ 30/30 |
+
+**Pendência conhecida:** em 14/08, após a publicação, as duas URLs retornavam
+**200 com o texto novo**, mas ainda serviam a versão **sem os links cruzados
+absolutos** — o link de um documento para o outro cai em 404
+(`bza.tec.br/politica-privacidade.html`). Os arquivos corrigidos estão em
+`DEPLOY/*.html`; basta republicá-los nos mesmos endereços. Não afeta o AAB.
 
 ## Entrega de 31/07/2026 — padronização visual + Billing
 

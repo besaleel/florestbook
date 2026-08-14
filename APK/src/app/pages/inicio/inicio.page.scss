@@ -199,6 +199,164 @@
   }
 }
 
+// --- Divulgacao cruzada da familia de jogos (BACKLOG 8.6) ---
+//
+// Cartao discreto logo abaixo do COMECAR: precisa ser claramente publicidade
+// (selo visivel, exigencia da Politica para Familias) sem competir com o botao
+// principal — dai a altura menor e o fundo translucido em vez de amarelo.
+.banner-cruzado {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  width: 100%;
+  max-width: 400px;
+  min-height: 76px;
+  padding: 0.7rem 0.9rem;
+  border: 2px solid rgb(255 255 255 / 70%);
+  border-radius: 20px;
+  background: rgb(255 255 255 / 88%);
+  box-shadow: 0 4px 14px rgb(0 0 0 / 14%);
+  text-align: left;
+  transition: transform 120ms ease;
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+// Selo "Publicidade" ancorado no topo do cartao: fica legivel antes do toque.
+.selo-anuncio {
+  position: absolute;
+  top: -10px;
+  left: 0.9rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  background: #5b3a12;
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.icone-promo {
+  flex: 0 0 auto;
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+}
+
+.texto-promo {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 0.15rem;
+  overflow: hidden;
+}
+
+.nome-promo {
+  color: #5b3a12;
+  font-size: 1.15rem;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.chamada-promo {
+  color: #6b5636;
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.seta-promo {
+  flex: 0 0 auto;
+  color: #a0855c;
+  font-size: 1.7rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+// --- Barreira parental do banner (BACKLOG 6.11, 8.6) ---
+
+.fundo-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgb(0 0 0 / 45%);
+}
+
+// Mesma linguagem visual do painel de compra da floresta: dialogo escuro
+// centralizado, porque e uma decisao do adulto, nao um menu da crianca.
+.painel-barreira {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 51;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  width: 78vw;
+  max-width: 340px;
+  padding: 1.1rem;
+  border-radius: 1rem;
+  background: rgb(0 0 0 / 88%);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 45%);
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.titulo-painel {
+  margin: 0;
+  color: #fff;
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.texto-painel {
+  margin: 0;
+  color: rgb(255 255 255 / 85%);
+  font-size: 1rem;
+}
+
+.erro-painel {
+  margin: 0;
+  color: #ffb0a6;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.campo-barreira {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 0.9rem;
+  border: 2px solid #ffd54a;
+  border-radius: 0.7rem;
+  background: #fff;
+  color: #1c1c1c;
+  font-size: 1.05rem;
+  text-align: center;
+}
+
+.botao-salvar {
+  min-height: 48px;
+  border: none;
+  border-radius: 0.7rem;
+  background: linear-gradient(180deg, #ffd54a, #f5a623);
+  color: #4a2c00;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.botao-cancelar {
+  min-height: 44px;
+  border: none;
+  background: none;
+  color: rgb(255 255 255 / 75%);
+  font-size: 0.95rem;
+  text-decoration: underline;
+}
+
 .legais {
   display: flex;
   gap: 0.6rem;
@@ -216,10 +374,55 @@
   }
 }
 
+// Telas baixas (16:9, ex. 360x640): o banner de divulgacao acrescentou ~90 px
+// que nao cabem no espacamento folgado do modelo. Encolhe o logo e os vaos
+// — nunca os alvos de toque, que continuam acima dos 48 dp.
+@media (max-height: 700px) {
+  .tela {
+    gap: 0.8vh;
+    justify-content: space-between;
+    padding-top: calc(1vh + env(safe-area-inset-top));
+    padding-bottom: calc(1vh + env(safe-area-inset-bottom));
+  }
+
+  .logo {
+    width: min(34vw, 150px);
+  }
+
+  .cartao {
+    gap: 0.6rem;
+    padding: 0.9rem 1.1rem 1rem;
+  }
+
+  .campo-nome {
+    min-height: 50px;
+  }
+
+  .botao-comecar {
+    min-height: 62px;
+  }
+
+  .banner-cruzado {
+    min-height: 64px;
+    padding: 0.5rem 0.8rem;
+  }
+
+  .icone-promo {
+    width: 46px;
+    height: 46px;
+  }
+
+  .legais button {
+    padding: 0.25rem 0.2rem;
+    font-size: 0.85rem;
+  }
+}
+
 // Acessibilidade (ESPECIFICATION 2.2, BACKLOG 4.13).
 @media (prefers-reduced-motion: reduce) {
   .botao-comecar,
-  .botao-redondo {
+  .botao-redondo,
+  .banner-cruzado {
     transition: none;
   }
 }

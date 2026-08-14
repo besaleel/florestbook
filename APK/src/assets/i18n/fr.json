@@ -53,6 +53,11 @@
     "erro": "Mauvaise réponse. Réessaie.",
     "confirmar": "Confirmer"
   },
+  "promo": {
+    "selo": "Publicité",
+    "chamada": "Découvre les animaux de la ferme !",
+    "abrir": "Ouvrir {{app}} sur Google Play"
+  },
   "legal": {
     "termos": "Conditions d'utilisation",
     "privacidade": "Politique de confidentialité"

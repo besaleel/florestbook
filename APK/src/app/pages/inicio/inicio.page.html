@@ -70,6 +70,30 @@
       {{ 'inicio.comecar' | translate }}
     </button>
 
+    <!-- Divulgacao cruzada da familia de jogos (BACKLOG 8.6). Marcado como
+         publicidade e atras da barreira parental: o link sai do app, e a
+         Politica para Familias exige as duas coisas.
+
+         Some com a compra de `remove_ads` (BACKLOG 6.9): quem pagou para
+         remover anuncios nao deve ver NENHUMA publicidade, e a divulgacao
+         cruzada e publicidade — inclusive pelo proprio selo que ela exibe. -->
+    @if (!settings.semAnuncios()) {
+      <button
+        class="banner-cruzado"
+        type="button"
+        (click)="abrirFarmBookComBarreira()"
+        [attr.aria-label]="'promo.abrir' | translate: { app: 'FarmBook' }"
+      >
+        <span class="selo-anuncio">{{ 'promo.selo' | translate }}</span>
+        <img class="icone-promo" src="assets/images/farmbook.webp" alt="" />
+        <span class="texto-promo">
+          <strong class="nome-promo">FarmBook</strong>
+          <span class="chamada-promo">{{ 'promo.chamada' | translate }}</span>
+        </span>
+        <span class="seta-promo" aria-hidden="true">›</span>
+      </button>
+    }
+
     <!-- Links legais no rodape, abrindo no navegador do sistema
          (BACKLOG 7.5). -->
     <nav class="legais">
@@ -81,5 +105,35 @@
         {{ 'legal.privacidade' | translate }}
       </button>
     </nav>
+
+    <!-- Barreira parental do banner do FarmBook: mesma conta da loja de
+         remove_ads (BACKLOG 6.11). -->
+    @if (painelFarmBook()) {
+      <div class="fundo-modal" (click)="painelFarmBook.set(false)"></div>
+      <div class="painel-barreira" role="dialog" aria-modal="true">
+        <h2 class="titulo-painel">{{ 'barreiraParental.titulo' | translate }}</h2>
+        <p class="texto-painel">
+          {{ 'barreiraParental.instrucao' | translate: { a: barreiraA(), b: barreiraB() } }}
+        </p>
+        @if (erroBarreira()) {
+          <p class="erro-painel">{{ 'barreiraParental.erro' | translate }}</p>
+        }
+        <input
+          class="campo-barreira"
+          type="number"
+          inputmode="numeric"
+          [value]="respostaBarreira()"
+          (input)="respostaBarreira.set($any($event.target).value)"
+          (keyup.enter)="confirmarBarreiraFarmBook()"
+          autocomplete="off"
+        />
+        <button type="button" class="botao-salvar" (click)="confirmarBarreiraFarmBook()">
+          {{ 'barreiraParental.confirmar' | translate }}
+        </button>
+        <button type="button" class="botao-cancelar" (click)="painelFarmBook.set(false)">
+          {{ 'anuncios.cancelar' | translate }}
+        </button>
+      </div>
+    }
   </div>
 </ion-content>

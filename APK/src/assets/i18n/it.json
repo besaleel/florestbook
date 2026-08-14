@@ -53,6 +53,11 @@
     "erro": "Risposta sbagliata. Riprova.",
     "confirmar": "Conferma"
   },
+  "promo": {
+    "selo": "Pubblicità",
+    "chamada": "Scopri gli animali della fattoria!",
+    "abrir": "Apri {{app}} su Google Play"
+  },
   "legal": {
     "termos": "Condizioni d'uso",
     "privacidade": "Informativa sulla privacy"

@@ -3,22 +3,28 @@
 Roteiro do que preencher, na ordem em que a Play Console pede. O que está
 marcado com ⚠️ é onde a revisão costuma reprovar.
 
-**Pacote:** `com.florestbook.app` · **Versão:** 1.0.0 (`versionCode` 1)
-**Arquivo:** `DEPLOY/florestbook-release-v01.aab` (12,62 MB)
+**Pacote:** `com.florestbook.app` · **Versão:** 1.3.0 (`versionCode` 5)
+**Arquivo:** `DEPLOY/florestbook-release-v05.aab` (13,42 MB)
 
 ---
 
 ## 1. Antes de tudo: confirmar os links legais
 
 A Play Console valida a URL da política de privacidade na submissão. Abra as
-três e confirme que carregam:
+duas e confirme que carregam:
 
-- https://besaleel.github.io/florestbook/
-- https://besaleel.github.io/florestbook/termos-de-uso.html
-- https://besaleel.github.io/florestbook/politica-privacidade.html
+- https://bza.tec.br/florestbook-termos-de-uso
+- https://bza.tec.br/florestbook-politica-privacidade
 
-Se derem 404, entre em **Settings › Pages** do repositório e confirme
-`Source: Deploy from a branch`, `Branch: main`, `Folder: /docs`.
+Estas são as URLs **oficiais desde 14/08/2026**, em domínio próprio, e são as
+mesmas embutidas no app (`APK/src/app/core/legal.ts`). O conteúdo de origem
+está em `DEPLOY/*.html` — publique esses arquivos nesses endereços.
+
+> ⚠️ As URLs precisam bater **exatamente** com as do app: um link da ficha
+> apontando para um endereço e o app abrindo outro é motivo de reprovação.
+
+O GitHub Pages (`https://besaleel.github.io/florestbook/`) continua no ar como
+espelho, servido por `docs/`, mas **não é mais o endereço oficial**.
 
 ---
 
@@ -163,7 +169,7 @@ depois:
 
 ## Checklist final
 
-- [ ] Os três links do GitHub Pages abrem
+- [ ] Os dois links legais em `bza.tec.br` abrem e batem com os do app
 - [ ] Ficha preenchida nos 6 idiomas
 - [ ] Ícone, feature graphic e screenshots enviados
 - [ ] Público-alvo: 5 anos ou menos + 6–8 anos

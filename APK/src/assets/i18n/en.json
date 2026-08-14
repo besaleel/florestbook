@@ -53,6 +53,11 @@
     "erro": "Wrong answer. Please try again.",
     "confirmar": "Confirm"
   },
+  "promo": {
+    "selo": "Advertisement",
+    "chamada": "Meet the farm animals!",
+    "abrir": "Open {{app}} on Google Play"
+  },
   "legal": {
     "termos": "Terms of Use",
     "privacidade": "Privacy Policy"
