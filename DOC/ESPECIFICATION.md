@@ -615,6 +615,36 @@ mensagem *"Compromisso com a Política para Famílias do Google Play"* na seçã
 A Política de Privacidade e o Termo de Uso devem declarar explicitamente esse
 compromisso e a ausência de coleta de dados.
 
+### 6.1.1 Padrão das URLs dos documentos legais
+
+Os documentos legais ficam no domínio próprio **`bza.tec.br`**, que hospeda os
+apps de toda a família de jogos. Como o domínio é compartilhado, **o nome do
+sistema vem primeiro no caminho**, seguido do tipo de documento:
+
+```
+https://bza.tec.br/<sistema>-termos-de-uso
+https://bza.tec.br/<sistema>-politica-privacidade
+```
+
+| Sistema | Termo de Uso | Política de Privacidade |
+|---------|--------------|-------------------------|
+| Florest Book | `https://bza.tec.br/florestbook-termos-de-uso` | `https://bza.tec.br/florestbook-politica-privacidade` |
+| FarmBook | `https://bza.tec.br/farmbook-termos-de-uso` | `https://bza.tec.br/farmbook-politica-privacidade` |
+
+Regras ao gerar ou atualizar esses documentos:
+
+- **Prefixe sempre com o nome do sistema.** Sem o prefixo, o documento de um
+  jogo colidiria com o de outro na raiz do domínio.
+- **Sem extensão `.html` na URL** — o servidor abstrai a extensão. Os arquivos
+  de origem continuam sendo `DEPLOY/termos-de-uso.html` e
+  `DEPLOY/politica-privacidade.html`.
+- **Links entre os documentos são ABSOLUTOS**, com a URL completa. Um `href`
+  relativo (`politica-privacidade.html`) é resolvido pelo navegador contra a
+  raiz do domínio e cai em **404**, porque o arquivo real está sob o caminho
+  prefixado. Foi um erro real, corrigido em 14/08/2026.
+- As URLs do app (`APK/src/app/core/legal.ts`) e as informadas na ficha da Play
+  Console têm de ser **exatamente as mesmas** — divergência reprova na revisão.
+
 ### 6.2 Preparação para iOS
 
 O iOS está declarado como plataforma futura (§ 1). Nada nesta versão deve
